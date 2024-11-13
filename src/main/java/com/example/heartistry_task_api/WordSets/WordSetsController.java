@@ -15,8 +15,8 @@ public class WordSetsController {
     private WordSetsService wordSetsService = new WordSetsService();
 
     @PostMapping("/add")
-    public @ResponseBody WordSets postMethodName(@RequestBody WordSets wordSets) {
-        return wordSets;
+    public @ResponseBody WordSetsDTO postMethodName(@RequestBody WordSets wordSets) {
+        WordSetsDTO wordSets2 = new WordSetsDTO(wordSetsService.save(wordSets));
+        return wordSets2;
     }
-    
 }
