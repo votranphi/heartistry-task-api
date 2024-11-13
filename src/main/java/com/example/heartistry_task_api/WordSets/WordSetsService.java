@@ -7,4 +7,8 @@ import org.springframework.stereotype.Service;
 public class WordSetsService {
     @Autowired
     private WordSetsRepository wordSetsRepository;
+
+    public void save(WordSets wordSets) {
+        wordSetsRepository.save(wordSets);
+    }
 }
