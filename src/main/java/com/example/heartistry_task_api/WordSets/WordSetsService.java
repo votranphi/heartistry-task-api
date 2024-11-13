@@ -8,7 +8,7 @@ public class WordSetsService {
     @Autowired
     private WordSetsRepository wordSetsRepository;
 
-    public void save(WordSets wordSets) {
-        wordSetsRepository.save(wordSets);
+    public WordSets save(WordSets wordSets) {
+        return wordSetsRepository.save(wordSets);
     }
 }
