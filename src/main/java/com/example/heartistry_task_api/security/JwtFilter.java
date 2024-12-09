@@ -24,7 +24,11 @@ public class JwtFilter implements Filter {
     @Autowired
     private ConfigService configService = new ConfigService();
 
-    private final String SECRET_KEY = "c66077ac1510b83fbda3822b8007fafb9fdf6e550d13574bfd98164d0328261e"; // Same as used in NestJS
+    private String SECRET_KEY = null; // Same as used in NestJS
+
+    public JwtFilter() {
+        this.SECRET_KEY = configService.getJwtSecret();
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)

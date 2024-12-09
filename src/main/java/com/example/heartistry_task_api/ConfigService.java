@@ -1,11 +1,11 @@
 package com.example.heartistry_task_api;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class ConfigService {
-    @Value("${my.app.jwt-secret}")
+    @Value("${jwt-secret}")
     private String jwtSecret;
 
     public String getJwtSecret() {

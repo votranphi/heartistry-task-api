@@ -19,7 +19,6 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/public/**").permitAll() // Allow public endpoints
-                                .requestMatchers("/wordsets/**").hasAuthority("user")
                                 .anyRequest().authenticated() // Secure other endpoints
                 )
                 .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
