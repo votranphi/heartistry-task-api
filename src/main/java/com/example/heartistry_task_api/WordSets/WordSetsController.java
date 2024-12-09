@@ -32,7 +32,6 @@ public class WordSetsController {
 
     @GetMapping("")
     public @ResponseBody ResponseEntity<List<WordSet>> getMyWordSets(@RequestAttribute("id") Integer id) {
-        System.out.println(id);
         return ResponseEntity.ok(wordSetsService.findWordSetsByUserId(id));
     }
 
