@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface WordSetsRepository extends JpaRepository<WordSets, Integer> {
+public interface WordSetsRepository extends JpaRepository<WordSet, Integer> {
 
 }
