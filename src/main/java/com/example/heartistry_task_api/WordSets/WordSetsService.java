@@ -17,4 +17,8 @@ public class WordSetsService {
     public List<WordSet> findWordSetsByUserId(Integer id) {
         return wordSetsRepository.findWordSetsByUserId(id);
     }
+
+    public List<WordSet> findAllWordSets() {
+        return wordSetsRepository.findAll();
+    }
 }
