@@ -1,4 +1,4 @@
-package com.example.heartistry_task_api.security;
+package com.example.heartistry_task_api.JwtVerification;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/public/**").permitAll() // Allow public endpoints
+                                .requestMatchers("/public/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // Allow public endpoints
                                 .anyRequest().authenticated() // Secure other endpoints
                 )
                 .addFilterBefore(jwtFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)

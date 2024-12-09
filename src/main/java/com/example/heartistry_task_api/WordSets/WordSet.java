@@ -13,6 +13,13 @@ public class WordSet {
     private Integer idUser;
     private String topic;
 
+    public WordSet() {}
+
+    public WordSet(Integer idUser, String topic) {
+        this.idUser = idUser;
+        this.topic = topic;
+    }
+
     public Integer getId() {
         return id;
     }
