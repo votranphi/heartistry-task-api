@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ConfigService {
-    @Value("${jwt.secret}")
+    @Value("${my.app.jwt-secret}")
     private String jwtSecret;
 
     public String getJwtSecret() {
