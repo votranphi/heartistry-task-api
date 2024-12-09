@@ -35,4 +35,9 @@ public class WordSetsController {
         System.out.println(id);
         return ResponseEntity.ok(wordSetsService.findWordSetsByUserId(id));
     }
+
+    @GetMapping("/all")
+    public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets() {
+        return ResponseEntity.ok(wordSetsService.findAllWordSets());
+    }
 }

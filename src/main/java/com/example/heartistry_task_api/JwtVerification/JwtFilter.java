@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ import com.example.heartistry_task_api.ConfigService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Component
 public class JwtFilter implements Filter {
@@ -50,9 +52,12 @@ public class JwtFilter implements Filter {
                 httpServletRequest.setAttribute("username", username);
                 httpServletRequest.setAttribute("role", role);
 
+                // Adding authorities for Spring Security
+                List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+
                 // This could be extended for user-based permissions
                 SecurityContextHolder.getContext().setAuthentication(
-                        new JwtAuthenticationToken(id, token, null)
+                        new JwtAuthenticationToken(id, token, authorities)
                 );
             } catch (Exception e) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
