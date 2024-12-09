@@ -1,11 +1,20 @@
 package com.example.heartistry_task_api.WordSets;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.heartistry_task_api.WordSets.Dto.AddDto;
+
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 
 @RestController
@@ -15,8 +24,15 @@ public class WordSetsController {
     private WordSetsService wordSetsService = new WordSetsService();
 
     @PostMapping("/add")
-    public @ResponseBody WordSetsDTO postMethodName(@RequestBody WordSets wordSets) {
-        WordSetsDTO wordSets2 = new WordSetsDTO(wordSetsService.save(wordSets));
-        return wordSets2;
+    public @ResponseBody ResponseEntity<WordSet> addWordSet(@RequestAttribute("id") Integer id, @RequestBody AddDto addDto) {
+        WordSet newWordSet = new WordSet(id, addDto.getTopic());
+
+        return ResponseEntity.ok(wordSetsService.save(newWordSet));
+    }
+
+    @GetMapping("")
+    public @ResponseBody ResponseEntity<List<WordSet>> getMyWordSets(@RequestAttribute("id") Integer id) {
+        System.out.println(id);
+        return ResponseEntity.ok(wordSetsService.findWordSetsByUserId(id));
     }
 }
