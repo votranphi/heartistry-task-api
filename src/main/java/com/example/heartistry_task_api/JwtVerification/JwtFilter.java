@@ -63,6 +63,9 @@ public class JwtFilter implements Filter {
                 httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
+        } else {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
         chain.doFilter(request, response);
     }
