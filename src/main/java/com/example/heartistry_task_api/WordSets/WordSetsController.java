@@ -30,7 +30,7 @@ public class WordSetsController {
         return ResponseEntity.ok(wordSetsService.save(newWordSet));
     }
 
-    @GetMapping("")
+    @GetMapping("/me")
     public @ResponseBody ResponseEntity<List<WordSet>> getMyWordSets(@RequestAttribute("id") Integer id) {
         return ResponseEntity.ok(wordSetsService.findWordSetsByUserId(id));
     }
