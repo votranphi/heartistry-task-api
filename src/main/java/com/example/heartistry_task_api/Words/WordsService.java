@@ -8,8 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.example.heartistry_task_api.Requests.Pagination;
-
 @Service
 public class WordsService {
     @Autowired
@@ -19,9 +17,13 @@ public class WordsService {
         return wordsRepository.save(word);
     }
 
-    public Page<Word> findByIdWordSet(Integer idWordSet, Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getPageSize());
+    public Page<Word> findByIdWordSet(Integer idWordSet, Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
         return wordsRepository.findByIdWordSet(idWordSet, pageable);
+    }
+
+    public Integer countByIdWordSet(Integer idWordSet) {
+        return wordsRepository.countByIdWordSet(idWordSet);
     }
 
     public List<Word> findAllWordSets() {
