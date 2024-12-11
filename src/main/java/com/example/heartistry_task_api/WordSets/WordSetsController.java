@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.heartistry_task_api.Requests.Pagination;
+import com.example.heartistry_task_api.Responses.ObjectWithPagination;
 import com.example.heartistry_task_api.WordSets.Dto.AddDto;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,9 +33,13 @@ public class WordSetsController {
     }
 
     @GetMapping("/me")
-    public @ResponseBody ResponseEntity<List<WordSet>> getMyWordSets(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
-        Pagination pagination = new Pagination(page, pageSize);
-        return ResponseEntity.ok(wordSetsService.getSequenceOfPost(idUser, pagination).toList());
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyWordSets(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            wordSetsService.getSequenceOfPost(idUser, page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, wordSetsService.countUserWordSet(idUser))
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/all")

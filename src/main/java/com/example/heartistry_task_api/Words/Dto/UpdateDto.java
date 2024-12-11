@@ -1,21 +1,16 @@
 package com.example.heartistry_task_api.Words.Dto;
 
-public class AddDto {
-    private Integer idWordSet;
+public class UpdateDto {
     private String word;
     private String note;
 
-    public AddDto() {}
+    public UpdateDto() {}
 
-    public AddDto(Integer idWordSet, String word, String note) {
-        this.idWordSet = idWordSet;
+    public UpdateDto(String word, String note) {
         this.word = word;
         this.note = note;
     }
 
-    public Integer getIdWordSet() {
-        return idWordSet;
-    }
     public String getWord() {
         return word;
     }
@@ -23,9 +18,6 @@ public class AddDto {
         return note;
     }
     
-    public void setIdWordSet(Integer idWordSet) {
-        this.idWordSet = idWordSet;
-    }
     public void setWord(String word) {
         this.word = word;
     }

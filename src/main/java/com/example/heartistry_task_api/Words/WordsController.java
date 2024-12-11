@@ -3,16 +3,23 @@ package com.example.heartistry_task_api.Words;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.Responses.Detail;
+import com.example.heartistry_task_api.Responses.ObjectWithPagination;
 import com.example.heartistry_task_api.Words.Dto.AddDto;
+import com.example.heartistry_task_api.Words.Dto.UpdateDto;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
@@ -25,14 +32,33 @@ public class WordsController {
 
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<Word> addWord(@RequestBody AddDto addDto) {
-        Word word = new Word(addDto.getIdWordSet(), addDto.getWord());
+        Word word = new Word(addDto.getIdWordSet(), addDto.getWord(), addDto.getNote());
 
         return ResponseEntity.ok(wordsService.save(word));
     }
 
     @GetMapping("/{id}")
-    public @ResponseBody ResponseEntity<List<Word>> getAllWordsByWordSetId(@PathVariable Integer id) {
-        return ResponseEntity.ok(wordsService.findWordSetsByWordSetId(id));
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllWordsByWordSetId(@PathVariable Integer id, @RequestParam Integer page, @RequestParam Integer pageSize) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            wordsService.findByIdWordSet(id, page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, wordsService.countByIdWordSet(id))
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public @ResponseBody ResponseEntity<Detail> updateWordById(@PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+        wordsService.updateWordById(id, updateDto);
+
+        return new ResponseEntity<Detail>(new Detail("Update word successfully", 200), HttpStatusCode.valueOf(200));
+    }
+
+    @DeleteMapping("/{id}")
+    public @ResponseBody ResponseEntity<Detail> deleteById(@PathVariable Integer id) {
+        wordsService.deleteWordById(id);
+
+        return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
     }
 
     @GetMapping("/all")
