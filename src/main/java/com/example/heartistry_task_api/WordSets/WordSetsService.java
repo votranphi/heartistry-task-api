@@ -8,8 +8,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.example.heartistry_task_api.Requests.Pagination;
-
 @Service
 public class WordSetsService {
     @Autowired
@@ -24,8 +22,12 @@ public class WordSetsService {
     }
 
     // function to ge a sequence of continuous wordsets
-    public Page<WordSet> getSequenceOfPost(Integer idUser, Pagination pagination) {
-        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getPageSize());
+    public Page<WordSet> getSequenceOfPost(Integer idUser, Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
         return wordSetsRepository.findByIdUser(idUser, pageable);
+    }
+
+    public Integer countUserWordSet(Integer idUser) {
+        return wordSetsRepository.countUserWordSet(idUser);
     }
 }
