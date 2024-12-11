@@ -38,6 +38,10 @@ public class WordsService {
         });
     }
 
+    public void deleteWordById(Integer id) {
+        wordsRepository.deleteById(id);
+    }
+
     public List<Word> findAllWordSets() {
         return wordsRepository.findAll();
     }
