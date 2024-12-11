@@ -12,12 +12,14 @@ public class Word {
     private Integer id;
     private Integer idWordSet;
     private String word;
+    private String note;
 
     public Word() {}
 
-    public Word(Integer idWordSet, String word) {
+    public Word(Integer idWordSet, String word, String note) {
         this.idWordSet = idWordSet;
         this.word = word;
+        this.note = note;
     }
 
     public Integer getId() {
@@ -29,6 +31,9 @@ public class Word {
     public String getWord() {
         return word;
     }
+    public String getNote() {
+        return note;
+    }
     
     public void setId(Integer id) {
         this.id = id;
@@ -38,5 +43,8 @@ public class Word {
     }
     public void setWord(String word) {
         this.word = word;
+    }
+    public void setNote(String note) {
+        this.note = note;
     }
 }
