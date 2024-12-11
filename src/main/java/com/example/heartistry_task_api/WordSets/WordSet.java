@@ -12,12 +12,14 @@ public class WordSet {
     private Integer id;
     private Integer idUser;
     private String topic;
+    private Integer noWords;
 
     public WordSet() {}
 
-    public WordSet(Integer idUser, String topic) {
+    public WordSet(Integer idUser, String topic, Integer noWords) {
         this.idUser = idUser;
         this.topic = topic;
+        this.noWords = noWords;
     }
 
     public Integer getId() {
@@ -26,15 +28,20 @@ public class WordSet {
     public Integer getIdUser() {
         return idUser;
     }
+    public Integer getNoWords() {
+        return noWords;
+    }
     public String getTopic() {
         return topic;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
     public void setIdUser(Integer idUser) {
         this.idUser = idUser;
+    }
+    public void setNoWords(Integer noWords) {
+        this.noWords = noWords;
     }
     public void setTopic(String topic) {
         this.topic = topic;

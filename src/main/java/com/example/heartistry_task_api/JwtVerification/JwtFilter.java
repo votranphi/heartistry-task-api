@@ -43,12 +43,12 @@ public class JwtFilter implements Filter {
                         .getBody();
 
                 // Extracting fields from the payload
-                Integer id = claims.get("id", Integer.class);
+                Integer idUser = claims.get("id", Integer.class);
                 String username = claims.get("username", String.class);
                 String role = claims.get("role", String.class);
 
                 // Adding extracted information to the request for further use
-                httpServletRequest.setAttribute("id", id);
+                httpServletRequest.setAttribute("idUser", idUser);
                 httpServletRequest.setAttribute("username", username);
                 httpServletRequest.setAttribute("role", role);
 
@@ -57,7 +57,7 @@ public class JwtFilter implements Filter {
 
                 // This could be extended for user-based permissions
                 SecurityContextHolder.getContext().setAuthentication(
-                        new JwtAuthenticationToken(id, token, authorities)
+                        new JwtAuthenticationToken(idUser, token, authorities)
                 );
             } catch (Exception e) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
