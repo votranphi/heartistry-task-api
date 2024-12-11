@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.Requests.Pagination;
 import com.example.heartistry_task_api.Words.Dto.AddDto;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,14 +27,16 @@ public class WordsController {
 
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<Word> addWord(@RequestBody AddDto addDto) {
-        Word word = new Word(addDto.getIdWordSet(), addDto.getWord());
+        Word word = new Word(addDto.getIdWordSet(), addDto.getWord(), addDto.getNote());
 
         return ResponseEntity.ok(wordsService.save(word));
     }
 
     @GetMapping("/{id}")
-    public @ResponseBody ResponseEntity<List<Word>> getAllWordsByWordSetId(@PathVariable Integer id) {
-        return ResponseEntity.ok(wordsService.findWordSetsByWordSetId(id));
+    public @ResponseBody ResponseEntity<List<Word>> getAllWordsByWordSetId(@PathVariable Integer id, @RequestParam Integer page, @RequestParam Integer pageSize) {
+        Pagination pagination = new Pagination(page, pageSize);
+
+        return ResponseEntity.ok(wordsService.findByIdWordSet(id, pagination).toList());
     }
 
     @GetMapping("/all")
