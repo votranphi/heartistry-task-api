@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.Requests.Pagination;
 import com.example.heartistry_task_api.WordSets.Dto.AddDto;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,15 +26,16 @@ public class WordSetsController {
     private WordSetsService wordSetsService = new WordSetsService();
 
     @PostMapping("/add")
-    public @ResponseBody ResponseEntity<WordSet> addWordSet(@RequestAttribute("id") Integer id, @RequestBody AddDto addDto) {
-        WordSet newWordSet = new WordSet(id, addDto.getTopic(), 0);
+    public @ResponseBody ResponseEntity<WordSet> addWordSet(@RequestAttribute("idUser") Integer idUser, @RequestBody AddDto addDto) {
+        WordSet newWordSet = new WordSet(idUser, addDto.getTopic(), 0);
 
         return ResponseEntity.ok(wordSetsService.save(newWordSet));
     }
 
     @GetMapping("/me")
-    public @ResponseBody ResponseEntity<List<WordSet>> getMyWordSets(@RequestAttribute("id") Integer id) {
-        return ResponseEntity.ok(wordSetsService.findWordSetsByUserId(id));
+    public @ResponseBody ResponseEntity<List<WordSet>> getMyWordSets(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
+        Pagination pagination = new Pagination(page, pageSize);
+        return ResponseEntity.ok(wordSetsService.getSequenceOfPost(idUser, pagination).toList());
     }
 
     @GetMapping("/all")
