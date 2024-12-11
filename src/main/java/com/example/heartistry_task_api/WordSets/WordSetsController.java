@@ -25,7 +25,7 @@ public class WordSetsController {
 
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<WordSet> addWordSet(@RequestAttribute("id") Integer id, @RequestBody AddDto addDto) {
-        WordSet newWordSet = new WordSet(id, addDto.getTopic());
+        WordSet newWordSet = new WordSet(id, addDto.getTopic(), 0);
 
         return ResponseEntity.ok(wordSetsService.save(newWordSet));
     }
