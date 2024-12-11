@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.heartistry_task_api.Words.Dto.UpdateDto;
 
 @Service
 public class WordsService {
@@ -24,6 +27,15 @@ public class WordsService {
 
     public Integer countByIdWordSet(Integer idWordSet) {
         return wordsRepository.countByIdWordSet(idWordSet);
+    }
+    
+    @Transactional
+    public void updateWordById(Integer id, UpdateDto updateDto) {
+        wordsRepository.findById(id).map(target -> {
+            target.setNote(updateDto.getNote());
+            target.setWord(updateDto.getWord());
+            return target; 
+        });
     }
 
     public List<Word> findAllWordSets() {
