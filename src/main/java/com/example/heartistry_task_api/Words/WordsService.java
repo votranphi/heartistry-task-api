@@ -17,6 +17,10 @@ public class WordsService {
     @Autowired
     private WordsRepository wordsRepository;
 
+    public Word findById(Integer id) {
+        return wordsRepository.findById(id).get();
+    }
+
     public Word save(Word word) {
         return wordsRepository.save(word);
     }
