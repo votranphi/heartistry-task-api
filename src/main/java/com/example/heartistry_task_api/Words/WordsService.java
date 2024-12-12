@@ -30,6 +30,10 @@ public class WordsService {
         return wordsRepository.findByIdWordSet(idWordSet, pageable);
     }
 
+    public List<Word> findAllByIdWordSet(Integer idWordSet) {
+        return wordsRepository.findByIdWordSet(idWordSet);
+    }
+
     public Integer countByIdWordSet(Integer idWordSet) {
         return wordsRepository.countByIdWordSet(idWordSet);
     }

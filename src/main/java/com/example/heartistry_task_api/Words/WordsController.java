@@ -42,14 +42,21 @@ public class WordsController {
         return ResponseEntity.ok(wordsService.save(word));
     }
 
-    @GetMapping("/{id}")
-    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllWordsByWordSetId(@PathVariable Integer id, @RequestParam Integer page, @RequestParam Integer pageSize) {
+    @GetMapping("/{idWordSet}/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getWordsByWordSetId(@PathVariable Integer idWordSet, @RequestParam Integer page, @RequestParam Integer pageSize) {
         ObjectWithPagination response = new ObjectWithPagination(
-            wordsService.findByIdWordSet(id, page, pageSize).toList(),
-            new ObjectWithPagination.PaginationObject(page, pageSize, wordsService.countByIdWordSet(id))
+            wordsService.findByIdWordSet(idWordSet, page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, wordsService.countByIdWordSet(idWordSet))
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{idWordSet}/all")
+    public @ResponseBody ResponseEntity<List<Word>> getAllWordsByWordSetId(@PathVariable Integer idWordSet) {
+        List<Word> words = wordsService.findAllByIdWordSet(idWordSet);
+
+        return ResponseEntity.ok(words);
     }
 
     @PatchMapping("/{id}")
