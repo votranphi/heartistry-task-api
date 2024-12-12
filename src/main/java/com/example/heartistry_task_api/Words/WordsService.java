@@ -1,6 +1,7 @@
 package com.example.heartistry_task_api.Words;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,10 @@ public class WordsService {
     @Autowired
     private WordsRepository wordsRepository;
 
+    public Word findById(Integer id) {
+        return wordsRepository.findById(id).get();
+    }
+
     public Word save(Word word) {
         return wordsRepository.save(word);
     }
@@ -30,8 +35,8 @@ public class WordsService {
     }
     
     @Transactional
-    public void updateWordById(Integer id, UpdateDto updateDto) {
-        wordsRepository.findById(id).map(target -> {
+    public Optional<Word> updateWordById(Integer id, UpdateDto updateDto) {
+        return wordsRepository.findById(id).map(target -> {
             target.setNote(updateDto.getNote());
             target.setWord(updateDto.getWord());
             return target; 
