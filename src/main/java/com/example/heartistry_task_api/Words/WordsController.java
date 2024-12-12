@@ -48,10 +48,10 @@ public class WordsController {
     }
 
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<Detail> updateWordById(@PathVariable Integer id, @RequestBody UpdateDto updateDto) {
-        wordsService.updateWordById(id, updateDto);
+    public @ResponseBody ResponseEntity<Word> updateWordById(@PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+        Word word = wordsService.updateWordById(id, updateDto).get();
 
-        return new ResponseEntity<Detail>(new Detail("Update word successfully", 200), HttpStatusCode.valueOf(200));
+        return ResponseEntity.ok(word);
     }
 
     @DeleteMapping("/{id}")
