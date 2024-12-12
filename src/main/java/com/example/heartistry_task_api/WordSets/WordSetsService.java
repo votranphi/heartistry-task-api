@@ -39,6 +39,14 @@ public class WordSetsService {
         });
     }
 
+    @Transactional
+    public Optional<WordSet> updateNoWordsById(Integer id, boolean isIncreased) {
+        return wordSetsRepository.findById(id).map(target -> {
+            target.setNoWords(isIncreased ? target.getNoWords() + 1 : target.getNoWords() - 1);
+            return target;
+        });
+    }
+
     public void deleteWordById(Integer id) {
         wordSetsRepository.deleteById(id);
     }
