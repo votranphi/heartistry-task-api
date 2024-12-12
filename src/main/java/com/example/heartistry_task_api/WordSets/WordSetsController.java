@@ -38,7 +38,7 @@ public class WordSetsController {
         return ResponseEntity.ok(wordSetsService.save(newWordSet));
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me/pagination")
     public @ResponseBody ResponseEntity<ObjectWithPagination> getMyWordSets(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
         ObjectWithPagination response = new ObjectWithPagination(
             wordSetsService.getSequenceOfPost(idUser, page, pageSize).toList(),
@@ -46,6 +46,13 @@ public class WordSetsController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/me/all")
+    public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets(@RequestAttribute("idUser") Integer idUser) {
+        List<WordSet> wordSets = wordSetsService.findAllById(idUser);
+
+        return ResponseEntity.ok(wordSets);
     }
 
     @PatchMapping("/{id}")
