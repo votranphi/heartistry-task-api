@@ -13,6 +13,7 @@ public class WordSet {
     private Integer idUser;
     private String topic;
     private Integer noWords;
+    private Boolean isRecommended;
 
     public WordSet() {}
 
@@ -20,6 +21,7 @@ public class WordSet {
         this.idUser = idUser;
         this.topic = topic;
         this.noWords = noWords;
+        this.isRecommended = false;
     }
 
     public Integer getId() {
@@ -34,6 +36,10 @@ public class WordSet {
     public String getTopic() {
         return topic;
     }
+    public Boolean getIsRecommended() {
+        return isRecommended;
+    }
+    
     public void setId(Integer id) {
         this.id = id;
     }
@@ -45,5 +51,8 @@ public class WordSet {
     }
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+    public void setIsRecommended(Boolean isRecommended) {
+        this.isRecommended = isRecommended;
     }
 }
