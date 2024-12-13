@@ -69,6 +69,16 @@ public class WordSetsController {
         return new ResponseEntity<Detail>(new Detail("Delete wordset successfully", 200), HttpStatusCode.valueOf(200));
     }
 
+    @GetMapping("/recommended/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getRecommendedWordSetsPagination(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            wordSetsService.findRecommendedWordSetsPagination(page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, wordSetsService.countRecommendedWordSet())
+        );
+        return ResponseEntity.ok(response);
+    }
+    
+
     @GetMapping("/all")
     public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets() {
         return ResponseEntity.ok(wordSetsService.findAllWordSets());
