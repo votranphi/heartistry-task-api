@@ -55,7 +55,16 @@ public class WordSetsService {
         wordSetsRepository.deleteById(id);
     }
 
+    public Page<WordSet> findRecommendedWordSetsPagination(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return wordSetsRepository.findByIsRecommended(true, pageable);
+    }
+
     public Integer countUserWordSet(Integer idUser) {
         return wordSetsRepository.countUserWordSet(idUser);
+    }
+
+    public Integer countRecommendedWordSet() {
+        return wordSetsRepository.countRecommendedWordSet(true);
     }
 }
