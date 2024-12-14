@@ -64,8 +64,8 @@ public class JwtFilter implements Filter {
                 return;
             }
         } else {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            // httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            // return;
         }
         chain.doFilter(request, response);
     }
