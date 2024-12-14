@@ -27,7 +27,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/public/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**")
+                                "/v3/api-docs/**",
+                                "/actuator/**")
                         .permitAll() // Allow necessary endpoints
                         .requestMatchers(
                                 "/wordsets/all",
