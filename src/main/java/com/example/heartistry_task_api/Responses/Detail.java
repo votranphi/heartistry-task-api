@@ -1,7 +1,12 @@
 package com.example.heartistry_task_api.Responses;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "An super normal response structure")
 public class Detail {
+    @Schema(description = "Message of the response", example = "Unauthorized")
     private String message;
+    @Schema(description = "Status code of the response", example = "401")
     private Integer statusCode;
 
     public Detail() {}
