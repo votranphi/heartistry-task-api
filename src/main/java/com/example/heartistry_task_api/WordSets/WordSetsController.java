@@ -1,6 +1,7 @@
 package com.example.heartistry_task_api.WordSets;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -50,22 +51,50 @@ public class WordSetsController {
 
     @GetMapping("/me/all")
     public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets(@RequestAttribute("idUser") Integer idUser) {
-        List<WordSet> wordSets = wordSetsService.findAllById(idUser);
+        List<WordSet> wordSets = wordSetsService.findAllByIdUser(idUser);
 
         return ResponseEntity.ok(wordSets);
     }
 
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<WordSet> updateById(@PathVariable Integer id, @RequestBody UpdateDto updateDto) {
-        WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
+    public @ResponseBody ResponseEntity<?> updateById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+        Optional<WordSet> foundWordSet = wordSetsService.findById(id);
 
+        if (foundWordSet.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Word Set not found", 404), HttpStatusCode.valueOf(404));
+        }
+
+        if (role.equals("admin")) {
+            WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
+            return ResponseEntity.ok(wordSet);
+        }
+
+        if (foundWordSet.get().getIdUser() != idUser) {
+            return new ResponseEntity<Detail>(new Detail("Update other user's wordset is for Admin only", 403), HttpStatusCode.valueOf(403));
+        }
+
+        WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
         return ResponseEntity.ok(wordSet);
     }
 
     @DeleteMapping("/{id}")
-    public @ResponseBody ResponseEntity<Detail> deleteById(@PathVariable Integer id) {
-        wordSetsService.deleteWordById(id);
+    public @ResponseBody ResponseEntity<Detail> deleteById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id) {
+        Optional<WordSet> foundWordSet = wordSetsService.findById(id);
 
+        if (foundWordSet.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Word Set not found", 404), HttpStatusCode.valueOf(404));
+        }
+
+        if (role.equals("admin")) {
+            wordSetsService.deleteWordById(id);
+            return new ResponseEntity<Detail>(new Detail("Delete wordset successfully", 200), HttpStatusCode.valueOf(200));
+        }
+
+        if (foundWordSet.get().getIdUser() != idUser) {
+            return new ResponseEntity<Detail>(new Detail("Delete other user's wordset is for Admin only", 403), HttpStatusCode.valueOf(403));
+        }
+
+        wordSetsService.deleteWordById(id);
         return new ResponseEntity<Detail>(new Detail("Delete wordset successfully", 200), HttpStatusCode.valueOf(200));
     }
 

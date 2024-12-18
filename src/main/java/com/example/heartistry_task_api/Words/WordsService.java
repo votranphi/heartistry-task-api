@@ -17,8 +17,8 @@ public class WordsService {
     @Autowired
     private WordsRepository wordsRepository;
 
-    public Word findById(Integer id) {
-        return wordsRepository.findById(id).get();
+    public Optional<Word> findById(Integer id) {
+        return wordsRepository.findById(id);
     }
 
     public Word save(Word word) {
