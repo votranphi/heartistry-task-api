@@ -18,6 +18,14 @@ import com.example.heartistry_task_api.WordSets.WordSetsService;
 import com.example.heartistry_task_api.Words.Dto.AddDto;
 import com.example.heartistry_task_api.Words.Dto.UpdateDto;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +44,12 @@ public class WordsController {
     @Autowired
     private WordSetsService wordSetsService = new WordSetsService();
 
+
+
+    @Operation(summary = "Add a new Word")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully added"),
+    })
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<Word> addWord(@RequestBody AddDto addDto) {
         Word word = new Word(addDto.getIdWordSet(), addDto.getWord(), addDto.getNote());
@@ -45,6 +59,12 @@ public class WordsController {
         return ResponseEntity.ok(wordsService.save(word));
     }
 
+
+
+    @Operation(summary = "Get Words by WordSet's id with pagination")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got"),
+    })
     @GetMapping("/{idWordSet}/pagination")
     public @ResponseBody ResponseEntity<ObjectWithPagination> getWordsByWordSetId(@PathVariable Integer idWordSet, @RequestParam Integer page, @RequestParam Integer pageSize) {
         ObjectWithPagination response = new ObjectWithPagination(
@@ -55,6 +75,12 @@ public class WordsController {
         return ResponseEntity.ok(response);
     }
 
+
+
+    @Operation(summary = "Get all Words by WordSet's id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got"),
+    })
     @GetMapping("/{idWordSet}/all")
     public @ResponseBody ResponseEntity<List<Word>> getAllWordsByWordSetId(@PathVariable Integer idWordSet) {
         List<Word> words = wordsService.findAllByIdWordSet(idWordSet);
@@ -62,6 +88,25 @@ public class WordsController {
         return ResponseEntity.ok(words);
     }
 
+
+
+    @Operation(summary = "Update Word by its id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Word not found",
+        content = @Content(mediaType = "application/json",
+        examples = @ExampleObject(
+            value = "{ \"message\": \"Word Set not found\", \"statusCode\": \"404\" }"
+        ))),
+        @ApiResponse(responseCode = "403", description = "Update other user's word is for Admin only",
+            content = @Content(mediaType = "application/json",
+            examples = @ExampleObject(
+                value = "{ \"message\": \"Update other user's word is for Admin only\", \"statusCode\": \"403\" }"
+        ))),
+        @ApiResponse(responseCode = "200", description = "Successfully updated",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Word.class)
+        ))
+    })
     @PatchMapping("/{id}")
     public @ResponseBody ResponseEntity<?> updateWordById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
         Optional<Word> foundWord = wordsService.findById(id);
@@ -84,6 +129,26 @@ public class WordsController {
         return ResponseEntity.ok(word);
     }
 
+
+
+    @Operation(summary = "Delete Word by its id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Word not found",
+        content = @Content(mediaType = "application/json",
+        examples = @ExampleObject(
+            value = "{ \"message\": \"Word Set not found\", \"statusCode\": \"404\" }"
+        ))),
+        @ApiResponse(responseCode = "403", description = "Delete other user's word is for Admin only",
+            content = @Content(mediaType = "application/json",
+            examples = @ExampleObject(
+                value = "{ \"message\": \"Delete other user's word is for Admin only\", \"statusCode\": \"403\" }"
+        ))),
+        @ApiResponse(responseCode = "200", description = "Successfully deleted",
+            content = @Content(mediaType = "application/json",
+            examples = @ExampleObject(
+                value = "{ \"message\": \"Delete word successfully\", \"statusCode\": \"403\" }"
+        ))),
+    })
     @DeleteMapping("/{id}")
     public @ResponseBody ResponseEntity<?> deleteById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id) {
         Optional<Word> foundWord = wordsService.findById(id);
@@ -108,6 +173,15 @@ public class WordsController {
         return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
     }
 
+
+
+    @Operation(summary = "Get all Words (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            array = @ArraySchema(schema = @Schema(implementation = Word.class))
+        ))
+    })
     @GetMapping("/all")
     public @ResponseBody ResponseEntity<List<Word>> getAllWords() {
         return ResponseEntity.ok(wordsService.findAllWordSets());
