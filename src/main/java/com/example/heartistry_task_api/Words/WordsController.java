@@ -1,6 +1,7 @@
 package com.example.heartistry_task_api.Words;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -12,11 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.heartistry_task_api.Responses.Detail;
 import com.example.heartistry_task_api.Responses.ObjectWithPagination;
+import com.example.heartistry_task_api.WordSets.WordSet;
 import com.example.heartistry_task_api.WordSets.WordSetsService;
 import com.example.heartistry_task_api.Words.Dto.AddDto;
 import com.example.heartistry_task_api.Words.Dto.UpdateDto;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,20 +63,48 @@ public class WordsController {
     }
 
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<Word> updateWordById(@PathVariable Integer id, @RequestBody UpdateDto updateDto) {
-        Word word = wordsService.updateWordById(id, updateDto).get();
+    public @ResponseBody ResponseEntity<?> updateWordById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+        Optional<Word> foundWord = wordsService.findById(id);
 
+        if (foundWord.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Word not found", 404), HttpStatusCode.valueOf(404));
+        }
+
+        if (role.equals("admin")) {
+            Word word = wordsService.updateWordById(id, updateDto).get();
+            return ResponseEntity.ok(word);
+        }
+
+        Optional<WordSet> linkedWordSet = wordSetsService.findById(foundWord.get().getIdWordSet());
+        if (linkedWordSet.get().getIdUser() != idUser) {
+            return new ResponseEntity<Detail>(new Detail("Update other user's word is for Admin only", 403), HttpStatusCode.valueOf(403));
+        }
+
+        Word word = wordsService.updateWordById(id, updateDto).get();
         return ResponseEntity.ok(word);
     }
 
     @DeleteMapping("/{id}")
-    public @ResponseBody ResponseEntity<Detail> deleteById(@PathVariable Integer id) {
-        Word word = wordsService.findById(id);
+    public @ResponseBody ResponseEntity<?> deleteById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id) {
+        Optional<Word> foundWord = wordsService.findById(id);
+
+        if (foundWord.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Word not found", 404), HttpStatusCode.valueOf(404));
+        }
+
+        if (role.equals("admin")) {
+            wordsService.deleteWordById(id);
+            wordSetsService.updateNoWordsById(foundWord.get().getIdWordSet(), false);
+            return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
+        }
+
+        Optional<WordSet> linkedWordSet = wordSetsService.findById(foundWord.get().getIdWordSet());
+        if (linkedWordSet.get().getIdUser() != idUser) {
+            return new ResponseEntity<Detail>(new Detail("Delete other user's word is for Admin only", 403), HttpStatusCode.valueOf(403));
+        }
 
         wordsService.deleteWordById(id);
-
-        wordSetsService.updateNoWordsById(word.getIdWordSet(), false);
-
+        wordSetsService.updateNoWordsById(foundWord.get().getIdWordSet(), false);
         return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
     }
 

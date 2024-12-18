@@ -31,8 +31,12 @@ public class WordSetsService {
         return wordSetsRepository.findByIdUser(idUser, pageable);
     }
 
-    public List<WordSet> findAllById(Integer idUser) {
+    public List<WordSet> findAllByIdUser(Integer idUser) {
         return wordSetsRepository.findByIdUser(idUser);
+    }
+
+    public Optional<WordSet> findById(Integer id) {
+        return wordSetsRepository.findById(id);
     }
 
     @Transactional
