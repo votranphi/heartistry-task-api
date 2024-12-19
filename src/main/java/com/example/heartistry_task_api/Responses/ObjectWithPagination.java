@@ -2,7 +2,7 @@ package com.example.heartistry_task_api.Responses;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "An list of objects response with it pagination info")
+@Schema(description = "A list of objects response with it pagination info")
 public class ObjectWithPagination {
     @Schema(description = "List of objects", example = "[]")
     private Object response;
