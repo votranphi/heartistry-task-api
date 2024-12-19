@@ -1,7 +1,12 @@
 package com.example.heartistry_task_api.Words.Dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "UpdateDto for updating a Word.")
 public class UpdateDto {
+    @Schema(description = "Vocabulary/Word", example = "Derivative")
     private String word;
+    @Schema(description = "Note for the Word", example = "Dao ham")
     private String note;
 
     public UpdateDto() {}

@@ -2,7 +2,7 @@ package com.example.heartistry_task_api.Responses;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "An super normal response structure")
+@Schema(description = "A super normal response structure")
 public class Detail {
     @Schema(description = "Message of the response", example = "Unauthorized")
     private String message;

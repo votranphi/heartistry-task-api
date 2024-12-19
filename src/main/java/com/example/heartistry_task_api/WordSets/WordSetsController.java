@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 
+@Tag(name = "WordSets", description = "Operations related to WordSets management")
 @RestController
 @RequestMapping(value = "/wordsets")
 public class WordSetsController {
