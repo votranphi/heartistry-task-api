@@ -32,7 +32,8 @@ public class SecurityConfig {
                         .permitAll() // Allow necessary endpoints
                         .requestMatchers(
                                 "/wordsets/all",
-                                "/words/all")
+                                "/words/all",
+                                "/documents/all")
                         .hasAuthority("admin") // Allow specific endpoint with specific role
                         .anyRequest().authenticated() // Secure other endpoints
                 )
