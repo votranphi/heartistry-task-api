@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 
 
-@Tag(name = "WordSets", description = "Operations related to Documents management")
+@Tag(name = "Documents", description = "Operations related to Documents management")
 @RestController
 @RequestMapping(value = "/documents")
 public class DocumentsController {
@@ -62,7 +62,7 @@ public class DocumentsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/me/pagination")
-    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyWordSets(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyDocuments(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
         ObjectWithPagination response = new ObjectWithPagination(
             documentsService.getSequenceOfDocument(idUser, page, pageSize).toList(),
             new ObjectWithPagination.PaginationObject(page, pageSize, documentsService.countUserDocument(idUser))
@@ -78,10 +78,10 @@ public class DocumentsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/me/all")
-    public @ResponseBody ResponseEntity<List<Document>> getAllWordSets(@RequestAttribute("idUser") Integer idUser) {
-        List<Document> wordSets = documentsService.findAllByIdUser(idUser);
+    public @ResponseBody ResponseEntity<List<Document>> getAllDocuments(@RequestAttribute("idUser") Integer idUser) {
+        List<Document> documents = documentsService.findAllByIdUser(idUser);
 
-        return ResponseEntity.ok(wordSets);
+        return ResponseEntity.ok(documents);
     }
 
 
@@ -153,7 +153,7 @@ public class DocumentsController {
         }
 
         if (role.equals("admin")) {
-            documentsService.deleteWordById(id);
+            documentsService.deleteDocumentById(id);
             return new ResponseEntity<Detail>(new Detail("Delete document successfully", 200), HttpStatusCode.valueOf(200));
         }
 
@@ -161,7 +161,7 @@ public class DocumentsController {
             return new ResponseEntity<Detail>(new Detail("Delete other user's document is for Admin only", 403), HttpStatusCode.valueOf(403));
         }
 
-        documentsService.deleteWordById(id);
+        documentsService.deleteDocumentById(id);
         return new ResponseEntity<Detail>(new Detail("Delete document successfully", 200), HttpStatusCode.valueOf(200));
     }
 

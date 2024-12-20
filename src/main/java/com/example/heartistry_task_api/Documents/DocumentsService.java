@@ -38,7 +38,7 @@ public class DocumentsService {
         });
     }
 
-    public void deleteWordById(Integer id) {
+    public void deleteDocumentById(Integer id) {
         documentsRepository.deleteById(id);
     }
 
