@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.Responses.Amount;
 import com.example.heartistry_task_api.Responses.Detail;
 import com.example.heartistry_task_api.Responses.ObjectWithPagination;
 import com.example.heartistry_task_api.WordSets.Dto.AddDto;
@@ -182,8 +183,22 @@ public class WordSetsController {
         );
         return ResponseEntity.ok(response);
     }
-    
 
+
+
+    @Operation(summary = "Get number of user's Word Sets")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Amount.class)
+        ))
+    })
+    @GetMapping("/me/count")
+    public @ResponseBody ResponseEntity<Amount> numberOfUsersWordSets(@RequestAttribute("idUser") Integer idUser) {
+        return ResponseEntity.ok(new Amount(wordSetsService.countUserWordSet(idUser)));
+    }
+    
+    
 
     @Operation(summary = "Get all Word Sets (Admin only)")
     @ApiResponses(value = {
