@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.Responses.Amount;
 import com.example.heartistry_task_api.Responses.Detail;
 import com.example.heartistry_task_api.Responses.ObjectWithPagination;
 import com.example.heartistry_task_api.WordSets.WordSet;
@@ -175,6 +176,27 @@ public class WordsController {
         return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
     }
 
+
+
+    @Operation(summary = "Get number of user's Words")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Amount.class)
+        ))
+    })
+    @GetMapping("/me/count")
+    public @ResponseBody ResponseEntity<Amount> numberOfUsersWords(@RequestAttribute("idUser") Integer idUser) {
+        List<WordSet> wordSets = wordSetsService.findAllByIdUser(idUser);
+
+        Integer amount = 0;
+        for (WordSet wordSet : wordSets) {
+            amount += wordsService.countByIdWordSet(wordSet.getId());
+        }
+        
+        return ResponseEntity.ok(new Amount(amount));
+    }
+    
 
 
     @Operation(summary = "Get all Words (Admin only)")
