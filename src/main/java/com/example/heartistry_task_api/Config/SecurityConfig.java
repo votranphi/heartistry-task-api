@@ -33,7 +33,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/wordsets/all",
                                 "/words/all",
-                                "/documents/all")
+                                "/documents/all",
+                                "audit-logs/all")
                         .hasAuthority("admin") // Allow specific endpoint with specific role
                         .anyRequest().authenticated() // Secure other endpoints
                 )

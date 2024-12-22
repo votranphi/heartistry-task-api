@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.AuditLogs.AuditLogsService;
 import com.example.heartistry_task_api.Documents.Dto.AddDto;
 import com.example.heartistry_task_api.Documents.Dto.UpdateDto;
 import com.example.heartistry_task_api.Responses.Detail;
@@ -41,6 +42,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class DocumentsController {
     @Autowired
     private DocumentsService documentsService = new DocumentsService();
+    @Autowired
+    private AuditLogsService auditLogsService = new AuditLogsService();
 
 
 
@@ -49,10 +52,28 @@ public class DocumentsController {
         @ApiResponse(responseCode = "200", description = "Successfully added"),
     })
     @PostMapping("/add")
-    public @ResponseBody ResponseEntity<Document> addDocument(@RequestAttribute("idUser") Integer idUser, @RequestBody AddDto addDto) {
+    public @ResponseBody ResponseEntity<Document> addDocument(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @RequestBody AddDto addDto
+    ) {
         Document newDocument = new Document(idUser, addDto.getName(), addDto.getDescription(), addDto.getUrl());
 
-        return ResponseEntity.ok(documentsService.save(newDocument));
+        Document savedDocument = documentsService.save(newDocument);
+
+        // make audit log
+        auditLogsService.createAuditLog(
+            "CREATE",
+            "Document",
+            savedDocument.getId(),
+            idUser,
+            username,
+            role,
+            "Create new document with name: " + savedDocument.getName() + " and description: " + savedDocument.getDescription() + " and url: " + savedDocument.getUrl()
+        );
+
+        return ResponseEntity.ok(savedDocument);
     }
 
 
@@ -62,7 +83,11 @@ public class DocumentsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/me/pagination")
-    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyDocuments(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyDocuments(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
         ObjectWithPagination response = new ObjectWithPagination(
             documentsService.getSequenceOfDocument(idUser, page, pageSize).toList(),
             new ObjectWithPagination.PaginationObject(page, pageSize, documentsService.countUserDocument(idUser))
@@ -104,7 +129,13 @@ public class DocumentsController {
         ))
     })
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> updateDocument(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+    public @ResponseBody ResponseEntity<?> updateDocument(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id,
+        @RequestBody UpdateDto updateDto
+    ) {
         Optional<Document> foundDocument = documentsService.findById(id);
 
         if (foundDocument.isEmpty()) {
@@ -113,6 +144,16 @@ public class DocumentsController {
 
         if (role.equals("admin")) {
             Document document = documentsService.updateById(id, updateDto).get();
+            // make audit log
+            auditLogsService.createAuditLog(
+                "UPDATE",
+                "Document",
+                document.getId(),
+                idUser,
+                username,
+                role,
+                "Update document with name: " + document.getName() + " and description: " + document.getDescription() + " and url: " + document.getUrl()
+            );
             return ResponseEntity.ok(document);
         }
 
@@ -121,6 +162,16 @@ public class DocumentsController {
         }
 
         Document document = documentsService.updateById(id, updateDto).get();
+        // make audit log
+        auditLogsService.createAuditLog(
+            "UPDATE",
+            "Document",
+            document.getId(),
+            idUser,
+            username,
+            role,
+            "Update document with name: " + document.getName() + " and description: " + document.getDescription() + " and url: " + document.getUrl()
+        );
         return ResponseEntity.ok(document);
     }
 
@@ -145,7 +196,12 @@ public class DocumentsController {
         ))),
     })
     @DeleteMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> deleteDocument(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<?> deleteDocument(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id
+    ) {
         Optional<Document> foundDocument = documentsService.findById(id);
 
         if (foundDocument.isEmpty()) {
@@ -153,6 +209,16 @@ public class DocumentsController {
         }
 
         if (role.equals("admin")) {
+            // make audit log
+            auditLogsService.createAuditLog(
+                "DELETE",
+                "WordSet",
+                foundDocument.get().getId(),
+                idUser,
+                username,
+                role,
+                "Delete document with name: " + foundDocument.get().getName() + " and description: " + foundDocument.get().getDescription() + " and url: " + foundDocument.get().getUrl()
+            );
             documentsService.deleteDocumentById(id);
             return new ResponseEntity<Detail>(new Detail("Delete document successfully", 200), HttpStatusCode.valueOf(200));
         }
@@ -161,6 +227,16 @@ public class DocumentsController {
             return new ResponseEntity<Detail>(new Detail("Delete other user's document is for Admin only", 403), HttpStatusCode.valueOf(403));
         }
 
+        // make audit log
+        auditLogsService.createAuditLog(
+            "DELETE",
+            "WordSet",
+            foundDocument.get().getId(),
+            idUser,
+            username,
+            role,
+            "Delete document with name: " + foundDocument.get().getName() + " and description: " + foundDocument.get().getDescription() + " and url: " + foundDocument.get().getUrl()
+        );
         documentsService.deleteDocumentById(id);
         return new ResponseEntity<Detail>(new Detail("Delete document successfully", 200), HttpStatusCode.valueOf(200));
     }
