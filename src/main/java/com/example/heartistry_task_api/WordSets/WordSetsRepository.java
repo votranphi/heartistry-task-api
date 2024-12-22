@@ -23,4 +23,11 @@ public interface WordSetsRepository extends JpaRepository<WordSet, Integer> {
 
     @Query("SELECT COUNT(w) FROM WordSet w WHERE w.isRecommended = :isRecommended")
     Integer countRecommendedWordSet(@Param("isRecommended") Boolean isRecommended);
+
+    @SuppressWarnings("null")
+    Page<WordSet> findAll(Pageable pageable);
+    
+    @Query("SELECT COUNT(w) FROM WordSet w")
+    Integer countAllWordSets();
+
 }

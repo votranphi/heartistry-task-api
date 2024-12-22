@@ -34,7 +34,11 @@ public class SecurityConfig {
                                 "/wordsets/all",
                                 "/words/all",
                                 "/documents/all",
-                                "audit-logs/all")
+                                "/audit-logs/all",
+                                "/wordsets/all/pagination",
+                                "/words/all/pagination",
+                                "/documents/all/pagination",
+                                "/audit-logs/all/pagination")
                         .hasAuthority("admin") // Allow specific endpoint with specific role
                         .anyRequest().authenticated() // Secure other endpoints
                 )
