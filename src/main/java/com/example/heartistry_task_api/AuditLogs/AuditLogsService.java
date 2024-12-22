@@ -29,4 +29,7 @@ public class AuditLogsService {
         return auditLogsRepository.countAllAuditLogs();
     }
 
+    public List<AuditLog> findByActionAndUserId(String action, Integer userId) {
+        return auditLogsRepository.findByActionAndUserId(action, userId);
+    }
 }

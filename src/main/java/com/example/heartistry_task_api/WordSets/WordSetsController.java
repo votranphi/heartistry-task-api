@@ -289,6 +289,7 @@ public class WordSetsController {
     }
 
 
+    
     @Operation(summary = "Get all Word Sets with pagination (Admin only)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully got",

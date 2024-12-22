@@ -255,6 +255,8 @@ public class DocumentsController {
         return ResponseEntity.ok(documentsService.findAll());
     }
     
+
+    
     @Operation(summary = "Get all Documents with pagination (Admin only)")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully got",

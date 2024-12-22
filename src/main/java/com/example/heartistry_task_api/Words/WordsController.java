@@ -287,6 +287,7 @@ public class WordsController {
         return ResponseEntity.ok(wordsService.findAllWordSets());
     }
 
+    
 
     @Operation(summary = "Get all Words (Admin only)")
     @ApiResponses(value = {
