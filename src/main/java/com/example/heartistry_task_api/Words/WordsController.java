@@ -286,4 +286,25 @@ public class WordsController {
     public @ResponseBody ResponseEntity<List<Word>> getAllWords() {
         return ResponseEntity.ok(wordsService.findAllWordSets());
     }
+
+
+    @Operation(summary = "Get all Words (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            array = @ArraySchema(schema = @Schema(implementation = Word.class))
+        ))
+    })
+    @GetMapping("/all/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllWordsWithPagination(
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            wordsService.findAllWordsWithPagination(page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, wordsService.countAllWords())
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }
