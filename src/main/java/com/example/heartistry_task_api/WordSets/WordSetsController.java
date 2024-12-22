@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.AuditLogs.AuditLogsService;
 import com.example.heartistry_task_api.Responses.Amount;
 import com.example.heartistry_task_api.Responses.Detail;
 import com.example.heartistry_task_api.Responses.ObjectWithPagination;
@@ -42,6 +43,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class WordSetsController {
     @Autowired
     private WordSetsService wordSetsService = new WordSetsService();
+    @Autowired
+    private AuditLogsService auditLogsService = new AuditLogsService();
 
 
 
@@ -50,10 +53,28 @@ public class WordSetsController {
         @ApiResponse(responseCode = "200", description = "Successfully added"),
     })
     @PostMapping("/add")
-    public @ResponseBody ResponseEntity<WordSet> addWordSet(@RequestAttribute("idUser") Integer idUser, @RequestBody AddDto addDto) {
+    public @ResponseBody ResponseEntity<WordSet> addWordSet(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @RequestBody AddDto addDto
+    ) {
         WordSet newWordSet = new WordSet(idUser, addDto.getTopic(), 0);
 
-        return ResponseEntity.ok(wordSetsService.save(newWordSet));
+        WordSet savedWordSet = wordSetsService.save(newWordSet);
+
+        // make audit log
+        auditLogsService.createAuditLog(
+            "CREATE",
+            "WordSet",
+            savedWordSet.getId(),
+            idUser,
+            username,
+            role,
+            "Create new WordSet with topic: " + savedWordSet.getTopic()
+        );
+
+        return ResponseEntity.ok(savedWordSet);
     }
 
 
@@ -63,7 +84,11 @@ public class WordSetsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/me/pagination")
-    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyWordSets(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyWordSets(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
         ObjectWithPagination response = new ObjectWithPagination(
             wordSetsService.getSequenceOfPost(idUser, page, pageSize).toList(),
             new ObjectWithPagination.PaginationObject(page, pageSize, wordSetsService.countUserWordSet(idUser))
@@ -105,7 +130,13 @@ public class WordSetsController {
         ))
     })
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> updateById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+    public @ResponseBody ResponseEntity<?> updateById(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id,
+        @RequestBody UpdateDto updateDto
+    ) {
         Optional<WordSet> foundWordSet = wordSetsService.findById(id);
 
         if (foundWordSet.isEmpty()) {
@@ -114,6 +145,16 @@ public class WordSetsController {
 
         if (role.equals("admin")) {
             WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
+            // make audit log
+            auditLogsService.createAuditLog(
+                "UPDATE",
+                "WordSet",
+                wordSet.getId(),
+                idUser,
+                username,
+                role,
+                "Update WordSet with topic: " + wordSet.getTopic()
+            );
             return ResponseEntity.ok(wordSet);
         }
 
@@ -122,6 +163,16 @@ public class WordSetsController {
         }
 
         WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
+        // make audit log
+        auditLogsService.createAuditLog(
+            "UPDATE",
+            "WordSet",
+            wordSet.getId(),
+            idUser,
+            username,
+            role,
+            "Update WordSet with topic: " + wordSet.getTopic()
+        );
         return ResponseEntity.ok(wordSet);
     }
 
@@ -146,7 +197,12 @@ public class WordSetsController {
         ))),
     })
     @DeleteMapping("/{id}")
-    public @ResponseBody ResponseEntity<Detail> deleteById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<Detail> deleteById(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id
+    ) {
         Optional<WordSet> foundWordSet = wordSetsService.findById(id);
 
         if (foundWordSet.isEmpty()) {
@@ -154,6 +210,16 @@ public class WordSetsController {
         }
 
         if (role.equals("admin")) {
+            // make audit log
+            auditLogsService.createAuditLog(
+                "DELETE",
+                "WordSet",
+                foundWordSet.get().getId(),
+                idUser,
+                username,
+                role,
+                "Delete WordSet with topic: " + foundWordSet.get().getTopic()
+            );
             wordSetsService.deleteWordById(id);
             return new ResponseEntity<Detail>(new Detail("Delete wordset successfully", 200), HttpStatusCode.valueOf(200));
         }
@@ -162,6 +228,16 @@ public class WordSetsController {
             return new ResponseEntity<Detail>(new Detail("Delete other user's wordset is for Admin only", 403), HttpStatusCode.valueOf(403));
         }
 
+        // make audit log
+        auditLogsService.createAuditLog(
+            "DELETE",
+            "WordSet",
+            foundWordSet.get().getId(),
+            idUser,
+            username,
+            role,
+            "Delete WordSet with topic: " + foundWordSet.get().getTopic()
+        );
         wordSetsService.deleteWordById(id);
         return new ResponseEntity<Detail>(new Detail("Delete wordset successfully", 200), HttpStatusCode.valueOf(200));
     }
