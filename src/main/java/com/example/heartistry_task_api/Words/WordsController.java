@@ -58,9 +58,9 @@ public class WordsController {
     })
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<Word> addWord(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @RequestBody AddDto addDto
     ) {
         Word word = new Word(addDto.getIdWordSet(), addDto.getWord(), addDto.getNote());
@@ -137,9 +137,9 @@ public class WordsController {
     })
     @PatchMapping("/{id}")
     public @ResponseBody ResponseEntity<?> updateWordById(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @PathVariable Integer id,
         @RequestBody UpdateDto updateDto
     ) {
@@ -205,9 +205,9 @@ public class WordsController {
     })
     @DeleteMapping("/{id}")
     public @ResponseBody ResponseEntity<?> deleteById(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @PathVariable Integer id
     ) {
         Optional<Word> foundWord = wordsService.findById(id);
@@ -262,7 +262,7 @@ public class WordsController {
         ))
     })
     @GetMapping("/me/count")
-    public @ResponseBody ResponseEntity<Amount> numberOfUsersWords(@RequestAttribute("idUser") Integer idUser) {
+    public @ResponseBody ResponseEntity<Amount> numberOfUsersWords(@RequestAttribute Integer idUser) {
         List<WordSet> wordSets = wordSetsService.findAllByIdUser(idUser);
 
         Integer amount = 0;

@@ -1,3 +1,0 @@
-This file is existed to keep pushing the "resources" folder to github.
-
-"application.properties" is ignored due to storing sensitive configurations, so the "resources" folder won't be pushed to github because it's empty
