@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.heartistry_task_api.AuditLogs.Dto.AddDto;
+import com.example.heartistry_task_api.Responses.ObjectWithPagination;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -62,4 +64,24 @@ public class AuditLogsController {
     public @ResponseBody ResponseEntity<List<AuditLog>> getAllAuditLogs() {
         return ResponseEntity.ok(auditLogsService.getAllAuditLogs());
     }
+
+    @Operation(summary = "Get all Audit Logs with pagination (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            array = @ArraySchema(schema = @Schema(implementation = AuditLog.class))
+        ))
+    })
+    @GetMapping("/all/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllAuditLogsPagination(
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            auditLogsService.findAllAuditLogsPagination(page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, auditLogsService.countAllAuditLogs())
+        );
+        return ResponseEntity.ok(response);
+    }
 }
+
