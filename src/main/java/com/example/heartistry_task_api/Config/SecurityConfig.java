@@ -20,7 +20,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
                 .cors(withDefaults())
                 .authorizeHttpRequests(auth -> auth
@@ -34,7 +34,11 @@ public class SecurityConfig {
                                 "/wordsets/all",
                                 "/words/all",
                                 "/documents/all",
-                                "audit-logs/all")
+                                "/audit-logs/all",
+                                "/wordsets/all/pagination",
+                                "/words/all/pagination",
+                                "/documents/all/pagination",
+                                "/audit-logs/all/pagination")
                         .hasAuthority("admin") // Allow specific endpoint with specific role
                         .anyRequest().authenticated() // Secure other endpoints
                 )

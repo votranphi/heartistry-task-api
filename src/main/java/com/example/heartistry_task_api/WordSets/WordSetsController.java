@@ -54,9 +54,9 @@ public class WordSetsController {
     })
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<WordSet> addWordSet(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @RequestBody AddDto addDto
     ) {
         WordSet newWordSet = new WordSet(idUser, addDto.getTopic(), 0);
@@ -85,7 +85,7 @@ public class WordSetsController {
     })
     @GetMapping("/me/pagination")
     public @ResponseBody ResponseEntity<ObjectWithPagination> getMyWordSets(
-        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute Integer idUser,
         @RequestParam Integer page,
         @RequestParam Integer pageSize
     ) {
@@ -104,7 +104,7 @@ public class WordSetsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/me/all")
-    public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets(@RequestAttribute("idUser") Integer idUser) {
+    public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets(@RequestAttribute Integer idUser) {
         List<WordSet> wordSets = wordSetsService.findAllByIdUser(idUser);
 
         return ResponseEntity.ok(wordSets);
@@ -131,9 +131,9 @@ public class WordSetsController {
     })
     @PatchMapping("/{id}")
     public @ResponseBody ResponseEntity<?> updateById(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @PathVariable Integer id,
         @RequestBody UpdateDto updateDto
     ) {
@@ -198,9 +198,9 @@ public class WordSetsController {
     })
     @DeleteMapping("/{id}")
     public @ResponseBody ResponseEntity<Detail> deleteById(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @PathVariable Integer id
     ) {
         Optional<WordSet> foundWordSet = wordSetsService.findById(id);
@@ -270,7 +270,7 @@ public class WordSetsController {
         ))
     })
     @GetMapping("/me/count")
-    public @ResponseBody ResponseEntity<Amount> numberOfUsersWordSets(@RequestAttribute("idUser") Integer idUser) {
+    public @ResponseBody ResponseEntity<Amount> numberOfUsersWordSets(@RequestAttribute Integer idUser) {
         return ResponseEntity.ok(new Amount(wordSetsService.countUserWordSet(idUser)));
     }
     
@@ -286,5 +286,23 @@ public class WordSetsController {
     @GetMapping("/all")
     public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets() {
         return ResponseEntity.ok(wordSetsService.findAllWordSets());
+    }
+
+
+    
+    @Operation(summary = "Get all Word Sets with pagination (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ObjectWithPagination.class)
+        ))
+    })
+    @GetMapping("/all/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllWordSetsPagination(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            wordSetsService.findAllWordSetsPagination(page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, wordSetsService.countAllWordSets())
+        );
+        return ResponseEntity.ok(response);
     }
 }

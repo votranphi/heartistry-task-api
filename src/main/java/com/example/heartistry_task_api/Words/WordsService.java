@@ -54,4 +54,13 @@ public class WordsService {
     public List<Word> findAllWordSets() {
         return wordsRepository.findAll();
     }
+
+    public Page<Word> findAllWordsWithPagination(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return wordsRepository.findAll(pageable);
+    }
+
+    public Integer countAllWords() {
+        return wordsRepository.countAllWords();
+    }
 }

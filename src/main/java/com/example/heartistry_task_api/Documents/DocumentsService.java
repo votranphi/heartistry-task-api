@@ -54,4 +54,13 @@ public class DocumentsService {
     public List<Document> findAllByIdUser(Integer idUser) {
         return documentsRepository.findByIdUser(idUser);
     }
+
+    public Page<Document> findAllPagination(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return documentsRepository.findAll(pageable);
+    }
+
+    public Integer countAllDocuments() {
+        return documentsRepository.countAllDocuments();
+    }
 }

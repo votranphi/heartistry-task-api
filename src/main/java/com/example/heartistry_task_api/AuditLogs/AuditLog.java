@@ -1,6 +1,6 @@
 package com.example.heartistry_task_api.AuditLogs;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -41,7 +41,7 @@ public class AuditLog {
 
     @Schema(description = "Timestamp of when the action occurred", example = "2024-12-21T11:10:22.402")
     @CreationTimestamp
-    private LocalDateTime timestamp;
+    private Instant timestamp;
 
     public AuditLog() {}
 
@@ -73,7 +73,7 @@ public class AuditLog {
     public void setRole(String role) {
         this.role = role;
     }
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
     public void setUserId(Integer userId) {
@@ -101,7 +101,7 @@ public class AuditLog {
     public String getRole() {
         return role;
     }
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
     public Integer getUserId() {

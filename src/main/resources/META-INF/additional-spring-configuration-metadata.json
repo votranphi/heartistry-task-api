@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "management.metrics.export.prometheus.endpoint",
+    "type": "java.lang.String",
+    "description": "Endpoint for prometheus metrics"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "Jwt Secret for verifying JWT tokens"
+  }
+]}

@@ -53,9 +53,9 @@ public class DocumentsController {
     })
     @PostMapping("/add")
     public @ResponseBody ResponseEntity<Document> addDocument(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @RequestBody AddDto addDto
     ) {
         Document newDocument = new Document(idUser, addDto.getName(), addDto.getDescription(), addDto.getUrl());
@@ -84,7 +84,7 @@ public class DocumentsController {
     })
     @GetMapping("/me/pagination")
     public @ResponseBody ResponseEntity<ObjectWithPagination> getMyDocuments(
-        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute Integer idUser,
         @RequestParam Integer page,
         @RequestParam Integer pageSize
     ) {
@@ -103,7 +103,7 @@ public class DocumentsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/me/all")
-    public @ResponseBody ResponseEntity<List<Document>> getAllDocuments(@RequestAttribute("idUser") Integer idUser) {
+    public @ResponseBody ResponseEntity<List<Document>> getAllDocuments(@RequestAttribute Integer idUser) {
         List<Document> documents = documentsService.findAllByIdUser(idUser);
 
         return ResponseEntity.ok(documents);
@@ -130,9 +130,9 @@ public class DocumentsController {
     })
     @PatchMapping("/{id}")
     public @ResponseBody ResponseEntity<?> updateDocument(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @PathVariable Integer id,
         @RequestBody UpdateDto updateDto
     ) {
@@ -197,9 +197,9 @@ public class DocumentsController {
     })
     @DeleteMapping("/{id}")
     public @ResponseBody ResponseEntity<?> deleteDocument(
-        @RequestAttribute("idUser") Integer idUser,
-        @RequestAttribute("username") String username,
-        @RequestAttribute("role") String role,
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
         @PathVariable Integer id
     ) {
         Optional<Document> foundDocument = documentsService.findById(id);
@@ -253,5 +253,27 @@ public class DocumentsController {
     @GetMapping("/all")
     public @ResponseBody ResponseEntity<List<Document>> getAllDocuments() {
         return ResponseEntity.ok(documentsService.findAll());
+    }
+    
+
+    
+    @Operation(summary = "Get all Documents with pagination (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ObjectWithPagination.class)
+        ))
+    })
+    @GetMapping("/all/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllDocumentsWithPagination(
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            documentsService.findAllPagination(page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, documentsService.countAllDocuments())
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

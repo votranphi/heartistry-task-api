@@ -19,4 +19,10 @@ public interface WordsRepository extends JpaRepository<Word, Integer> {
 
     @Query("SELECT COUNT(w) FROM Word w WHERE w.idWordSet = :idWordSet")
     Integer countByIdWordSet(@Param("idWordSet") Integer idWordSet);
+
+    @SuppressWarnings("null")
+    Page<Word> findAll(Pageable pageable);
+
+    @Query("SELECT COUNT(w) FROM Word w")
+    Integer countAllWords();
 }
