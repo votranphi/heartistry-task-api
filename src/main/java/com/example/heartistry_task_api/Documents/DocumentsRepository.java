@@ -17,4 +17,10 @@ public interface DocumentsRepository extends JpaRepository<Document, Integer>  {
 
     @Query("SELECT COUNT(d) FROM Document d WHERE d.idUser = :idUser")
     Integer countUserWordSet(@Param("idUser") Integer idUser);
+
+    @SuppressWarnings("null")
+    Page<Document> findAll(Pageable pageable);
+
+    @Query("SELECT COUNT(d) FROM Document d")
+    Integer countAllDocuments();
 }

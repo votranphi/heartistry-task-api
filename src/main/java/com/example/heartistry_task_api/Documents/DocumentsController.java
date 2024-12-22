@@ -254,4 +254,24 @@ public class DocumentsController {
     public @ResponseBody ResponseEntity<List<Document>> getAllDocuments() {
         return ResponseEntity.ok(documentsService.findAll());
     }
+    
+    @Operation(summary = "Get all Documents with pagination (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ObjectWithPagination.class)
+        ))
+    })
+    @GetMapping("/all/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllDocumentsWithPagination(
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            documentsService.findAllPagination(page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, documentsService.countAllDocuments())
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }
