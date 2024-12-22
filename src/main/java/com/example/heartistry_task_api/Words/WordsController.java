@@ -57,7 +57,12 @@ public class WordsController {
         @ApiResponse(responseCode = "200", description = "Successfully added"),
     })
     @PostMapping("/add")
-    public @ResponseBody ResponseEntity<Word> addWord(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @RequestBody AddDto addDto) {
+    public @ResponseBody ResponseEntity<Word> addWord(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @RequestBody AddDto addDto
+    ) {
         Word word = new Word(addDto.getIdWordSet(), addDto.getWord(), addDto.getNote());
 
         wordSetsService.updateNoWordsById(word.getIdWordSet(), true);
@@ -85,7 +90,11 @@ public class WordsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/{idWordSet}/pagination")
-    public @ResponseBody ResponseEntity<ObjectWithPagination> getWordsByWordSetId(@PathVariable Integer idWordSet, @RequestParam Integer page, @RequestParam Integer pageSize) {
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getWordsByWordSetId(
+        @PathVariable Integer idWordSet,
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
         ObjectWithPagination response = new ObjectWithPagination(
             wordsService.findByIdWordSet(idWordSet, page, pageSize).toList(),
             new ObjectWithPagination.PaginationObject(page, pageSize, wordsService.countByIdWordSet(idWordSet))
@@ -127,7 +136,13 @@ public class WordsController {
         ))
     })
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> updateWordById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+    public @ResponseBody ResponseEntity<?> updateWordById(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id,
+        @RequestBody UpdateDto updateDto
+    ) {
         Optional<Word> foundWord = wordsService.findById(id);
 
         if (foundWord.isEmpty()) {
@@ -189,7 +204,12 @@ public class WordsController {
         ))),
     })
     @DeleteMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> deleteById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<?> deleteById(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id
+    ) {
         Optional<Word> foundWord = wordsService.findById(id);
 
         if (foundWord.isEmpty()) {

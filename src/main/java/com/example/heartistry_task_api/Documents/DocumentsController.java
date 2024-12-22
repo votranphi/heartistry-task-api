@@ -52,7 +52,12 @@ public class DocumentsController {
         @ApiResponse(responseCode = "200", description = "Successfully added"),
     })
     @PostMapping("/add")
-    public @ResponseBody ResponseEntity<Document> addDocument(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @RequestBody AddDto addDto) {
+    public @ResponseBody ResponseEntity<Document> addDocument(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @RequestBody AddDto addDto
+    ) {
         Document newDocument = new Document(idUser, addDto.getName(), addDto.getDescription(), addDto.getUrl());
 
         Document savedDocument = documentsService.save(newDocument);
@@ -78,7 +83,11 @@ public class DocumentsController {
         @ApiResponse(responseCode = "200", description = "Successfully got"),
     })
     @GetMapping("/me/pagination")
-    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyDocuments(@RequestAttribute("idUser") Integer idUser, @RequestParam Integer page, @RequestParam Integer pageSize) {
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getMyDocuments(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestParam Integer page,
+        @RequestParam Integer pageSize
+    ) {
         ObjectWithPagination response = new ObjectWithPagination(
             documentsService.getSequenceOfDocument(idUser, page, pageSize).toList(),
             new ObjectWithPagination.PaginationObject(page, pageSize, documentsService.countUserDocument(idUser))
@@ -120,7 +129,13 @@ public class DocumentsController {
         ))
     })
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> updateDocument(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+    public @ResponseBody ResponseEntity<?> updateDocument(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id,
+        @RequestBody UpdateDto updateDto
+    ) {
         Optional<Document> foundDocument = documentsService.findById(id);
 
         if (foundDocument.isEmpty()) {
@@ -181,7 +196,12 @@ public class DocumentsController {
         ))),
     })
     @DeleteMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> deleteDocument(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<?> deleteDocument(
+        @RequestAttribute("idUser") Integer idUser,
+        @RequestAttribute("username") String username,
+        @RequestAttribute("role") String role,
+        @PathVariable Integer id
+    ) {
         Optional<Document> foundDocument = documentsService.findById(id);
 
         if (foundDocument.isEmpty()) {
