@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.heartistry_task_api.AuditLogs.AuditLogsService;
 import com.example.heartistry_task_api.Responses.Amount;
 import com.example.heartistry_task_api.Responses.Detail;
 import com.example.heartistry_task_api.Responses.ObjectWithPagination;
@@ -46,6 +47,8 @@ public class WordsController {
     private WordsService wordsService = new WordsService();
     @Autowired
     private WordSetsService wordSetsService = new WordSetsService();
+    @Autowired
+    private AuditLogsService auditLogsService = new AuditLogsService();
 
 
 
@@ -54,12 +57,25 @@ public class WordsController {
         @ApiResponse(responseCode = "200", description = "Successfully added"),
     })
     @PostMapping("/add")
-    public @ResponseBody ResponseEntity<Word> addWord(@RequestBody AddDto addDto) {
+    public @ResponseBody ResponseEntity<Word> addWord(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @RequestBody AddDto addDto) {
         Word word = new Word(addDto.getIdWordSet(), addDto.getWord(), addDto.getNote());
 
         wordSetsService.updateNoWordsById(word.getIdWordSet(), true);
 
-        return ResponseEntity.ok(wordsService.save(word));
+        Word savedWord = wordsService.save(word);
+
+        // make audit log
+        auditLogsService.createAuditLog(
+            "CREATE",
+            "Word",
+            savedWord.getId(),
+            idUser,
+            username,
+            role,
+            "Create new word with id " + savedWord.getId() + " in word set with id " + savedWord.getIdWordSet() + " with word " + savedWord.getWord() + " and note " + savedWord.getNote()
+        );
+
+        return ResponseEntity.ok(savedWord);
     }
 
 
@@ -111,7 +127,7 @@ public class WordsController {
         ))
     })
     @PatchMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> updateWordById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
+    public @ResponseBody ResponseEntity<?> updateWordById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @PathVariable Integer id, @RequestBody UpdateDto updateDto) {
         Optional<Word> foundWord = wordsService.findById(id);
 
         if (foundWord.isEmpty()) {
@@ -120,6 +136,16 @@ public class WordsController {
 
         if (role.equals("admin")) {
             Word word = wordsService.updateWordById(id, updateDto).get();
+            // make audit log
+            auditLogsService.createAuditLog(
+                "UPDATE",
+                "Word",
+                word.getId(),
+                idUser,
+                username,
+                role,
+                "Update word with id " + word.getId() + " in word set with id " + word.getIdWordSet() + " with word " + word.getWord() + " and note " + word.getNote()
+            );
             return ResponseEntity.ok(word);
         }
 
@@ -129,6 +155,16 @@ public class WordsController {
         }
 
         Word word = wordsService.updateWordById(id, updateDto).get();
+        // make audit log
+        auditLogsService.createAuditLog(
+            "UPDATE",
+            "Word",
+            word.getId(),
+            idUser,
+            username,
+            role,
+            "Update word with id " + word.getId() + " in word set with id " + word.getIdWordSet() + " with word " + word.getWord() + " and note " + word.getNote()
+        );
         return ResponseEntity.ok(word);
     }
 
@@ -153,7 +189,7 @@ public class WordsController {
         ))),
     })
     @DeleteMapping("/{id}")
-    public @ResponseBody ResponseEntity<?> deleteById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("role") String role, @PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<?> deleteById(@RequestAttribute("idUser") Integer idUser, @RequestAttribute("username") String username, @RequestAttribute("role") String role, @PathVariable Integer id) {
         Optional<Word> foundWord = wordsService.findById(id);
 
         if (foundWord.isEmpty()) {
@@ -161,6 +197,16 @@ public class WordsController {
         }
 
         if (role.equals("admin")) {
+            // make audit log
+            auditLogsService.createAuditLog(
+                "DELETE",
+                "Word",
+                foundWord.get().getId(),
+                idUser,
+                username,
+                role,
+                "Delete word with id " + foundWord.get().getId() + " in word set with id " + foundWord.get().getIdWordSet() + " with word " + foundWord.get().getWord() + " and note " + foundWord.get().getNote()
+            );
             wordsService.deleteWordById(id);
             wordSetsService.updateNoWordsById(foundWord.get().getIdWordSet(), false);
             return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
@@ -171,6 +217,16 @@ public class WordsController {
             return new ResponseEntity<Detail>(new Detail("Delete other user's word is for Admin only", 403), HttpStatusCode.valueOf(403));
         }
 
+        // make audit log
+        auditLogsService.createAuditLog(
+            "DELETE",
+            "Word",
+            foundWord.get().getId(),
+            idUser,
+            username,
+            role,
+            "Delete word with id " + foundWord.get().getId() + " in word set with id " + foundWord.get().getIdWordSet() + " with word " + foundWord.get().getWord() + " and note " + foundWord.get().getNote()
+        );
         wordsService.deleteWordById(id);
         wordSetsService.updateNoWordsById(foundWord.get().getIdWordSet(), false);
         return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
