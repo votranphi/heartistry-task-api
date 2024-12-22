@@ -287,4 +287,21 @@ public class WordSetsController {
     public @ResponseBody ResponseEntity<List<WordSet>> getAllWordSets() {
         return ResponseEntity.ok(wordSetsService.findAllWordSets());
     }
+
+
+    @Operation(summary = "Get all Word Sets with pagination (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successfully got",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = ObjectWithPagination.class)
+        ))
+    })
+    @GetMapping("/all/pagination")
+    public @ResponseBody ResponseEntity<ObjectWithPagination> getAllWordSetsPagination(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        ObjectWithPagination response = new ObjectWithPagination(
+            wordSetsService.findAllWordSetsPagination(page, pageSize).toList(),
+            new ObjectWithPagination.PaginationObject(page, pageSize, wordSetsService.countAllWordSets())
+        );
+        return ResponseEntity.ok(response);
+    }
 }

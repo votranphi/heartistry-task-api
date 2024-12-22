@@ -71,4 +71,13 @@ public class WordSetsService {
     public Integer countRecommendedWordSet() {
         return wordSetsRepository.countRecommendedWordSet(true);
     }
+
+    public Page<WordSet> findAllWordSetsPagination(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+        return wordSetsRepository.findAll(pageable);
+    }
+
+    public Integer countAllWordSets() {
+        return wordSetsRepository.countAllWordSets();
+    }
 }
