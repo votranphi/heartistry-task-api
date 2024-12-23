@@ -19,8 +19,10 @@ public class Document {
     private String name;
     @Schema(description = "Description of the Document", example = "Toan 12 Chuong Trinh Moi")
     private String description;
-    @Schema(description = "Url of the Document", example = "https://res.cloudinary.com/diy6oyo6l/image/upload/v1733592844/image_hdhb1e.png")
+    @Schema(description = "Url of the Document", example = "https://res.cloudinary.com/diy6oyo6l/image/upload/v1733592844/image_hdhb1e.pdf")
     private String url;
+    @Schema(description = "Is this document approved", example = "false")
+    private Boolean isApproved;
 
     public Document() {}
 
@@ -29,6 +31,7 @@ public class Document {
         this.name = name;
         this.description = description;
         this.url = url;
+        this.isApproved = false;
     }
 
     public String getDescription() {
@@ -46,6 +49,9 @@ public class Document {
     public String getUrl() {
         return url;
     }
+    public Boolean getIsApproved() {
+        return isApproved;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -61,5 +67,8 @@ public class Document {
     }
     public void setUrl(String url) {
         this.url = url;
+    }
+    public void setIsApproved(Boolean isApproved) {
+        this.isApproved = isApproved;
     }
 }
