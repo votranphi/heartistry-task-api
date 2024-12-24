@@ -111,7 +111,7 @@ public class DocumentsController {
 
 
 
-    @Operation(summary = "Update Document info by its id")
+    @Operation(summary = "Update your Document info by its id")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Document not found",
         content = @Content(mediaType = "application/json",
@@ -128,7 +128,7 @@ public class DocumentsController {
             schema = @Schema(implementation = Document.class)
         ))
     })
-    @PatchMapping("/{id}")
+    @PatchMapping("/me/{id}")
     public @ResponseBody ResponseEntity<?> updateDocument(
         @RequestAttribute Integer idUser,
         @RequestAttribute String username,
@@ -140,21 +140,6 @@ public class DocumentsController {
 
         if (foundDocument.isEmpty()) {
             return new ResponseEntity<Detail>(new Detail("Document not found", 404), HttpStatusCode.valueOf(404));
-        }
-
-        if (role.equals("admin")) {
-            Document document = documentsService.updateById(id, updateDto).get();
-            // make audit log
-            auditLogsService.createAuditLog(
-                "UPDATE",
-                "Document",
-                document.getId(),
-                idUser,
-                username,
-                role,
-                "Update document with name: " + document.getName() + " and description: " + document.getDescription() + " and url: " + document.getUrl()
-            );
-            return ResponseEntity.ok(document);
         }
 
         if (foundDocument.get().getIdUser() != idUser) {
@@ -177,7 +162,49 @@ public class DocumentsController {
 
 
 
-    @Operation(summary = "Delete Document by its id")
+    @Operation(summary = "Update Document info by its id (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Document not found",
+        content = @Content(mediaType = "application/json",
+        examples = @ExampleObject(
+            value = "{ \"message\": \"Document not found\", \"statusCode\": \"404\" }"
+        ))),
+        @ApiResponse(responseCode = "200", description = "Successfully updated",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Document.class)
+        ))
+    })
+    @PatchMapping("/{id}")
+    public @ResponseBody ResponseEntity<?> updateDocumentForAdmin(
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
+        @PathVariable Integer id,
+        @RequestBody UpdateDto updateDto
+    ) {
+        Optional<Document> foundDocument = documentsService.findById(id);
+
+        if (foundDocument.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Document not found", 404), HttpStatusCode.valueOf(404));
+        }
+
+        Document document = documentsService.updateById(id, updateDto).get();
+        // make audit log
+        auditLogsService.createAuditLog(
+            "UPDATE",
+            "Document",
+            document.getId(),
+            idUser,
+            username,
+            role,
+            "Update document with name: " + document.getName() + " and description: " + document.getDescription() + " and url: " + document.getUrl()
+        );
+        return ResponseEntity.ok(document);
+    }
+
+
+
+    @Operation(summary = "Delete your Document by its id")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Document not found",
         content = @Content(mediaType = "application/json",
@@ -195,7 +222,7 @@ public class DocumentsController {
                 value = "{ \"message\": \"Delete document successfully\", \"statusCode\": \"403\" }"
         ))),
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/me/{id}")
     public @ResponseBody ResponseEntity<?> deleteDocument(
         @RequestAttribute Integer idUser,
         @RequestAttribute String username,
@@ -208,23 +235,50 @@ public class DocumentsController {
             return new ResponseEntity<Detail>(new Detail("Document not found", 404), HttpStatusCode.valueOf(404));
         }
 
-        if (role.equals("admin")) {
-            // make audit log
-            auditLogsService.createAuditLog(
-                "DELETE",
-                "WordSet",
-                foundDocument.get().getId(),
-                idUser,
-                username,
-                role,
-                "Delete document with name: " + foundDocument.get().getName() + " and description: " + foundDocument.get().getDescription() + " and url: " + foundDocument.get().getUrl()
-            );
-            documentsService.deleteDocumentById(id);
-            return new ResponseEntity<Detail>(new Detail("Delete document successfully", 200), HttpStatusCode.valueOf(200));
-        }
-
         if (foundDocument.get().getIdUser() != idUser) {
             return new ResponseEntity<Detail>(new Detail("Delete other user's document is for Admin only", 403), HttpStatusCode.valueOf(403));
+        }
+
+        // make audit log
+        auditLogsService.createAuditLog(
+            "DELETE",
+            "WordSet",
+            foundDocument.get().getId(),
+            idUser,
+            username,
+            role,
+            "Delete document with name: " + foundDocument.get().getName() + " and description: " + foundDocument.get().getDescription() + " and url: " + foundDocument.get().getUrl()
+        );
+        documentsService.deleteDocumentById(id);
+        return new ResponseEntity<Detail>(new Detail("Delete document successfully", 200), HttpStatusCode.valueOf(200));
+    }
+
+
+
+    @Operation(summary = "Delete Document by its id (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Document not found",
+        content = @Content(mediaType = "application/json",
+        examples = @ExampleObject(
+            value = "{ \"message\": \"Document not found\", \"statusCode\": \"404\" }"
+        ))),
+        @ApiResponse(responseCode = "200", description = "Successfully deleted",
+            content = @Content(mediaType = "application/json",
+            examples = @ExampleObject(
+                value = "{ \"message\": \"Delete document successfully\", \"statusCode\": \"403\" }"
+        ))),
+    })
+    @DeleteMapping("/{id}")
+    public @ResponseBody ResponseEntity<?> deleteDocumentForAdmin(
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
+        @PathVariable Integer id
+    ) {
+        Optional<Document> foundDocument = documentsService.findById(id);
+
+        if (foundDocument.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Document not found", 404), HttpStatusCode.valueOf(404));
         }
 
         // make audit log

@@ -117,8 +117,7 @@ public class WordsController {
     }
 
 
-
-    @Operation(summary = "Update Word by its id")
+    @Operation(summary = "Update your Word by its id")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Word not found",
         content = @Content(mediaType = "application/json",
@@ -135,7 +134,7 @@ public class WordsController {
             schema = @Schema(implementation = Word.class)
         ))
     })
-    @PatchMapping("/{id}")
+    @PatchMapping("/me/{id}")
     public @ResponseBody ResponseEntity<?> updateWordById(
         @RequestAttribute Integer idUser,
         @RequestAttribute String username,
@@ -147,21 +146,6 @@ public class WordsController {
 
         if (foundWord.isEmpty()) {
             return new ResponseEntity<Detail>(new Detail("Word not found", 404), HttpStatusCode.valueOf(404));
-        }
-
-        if (role.equals("admin")) {
-            Word word = wordsService.updateWordById(id, updateDto).get();
-            // make audit log
-            auditLogsService.createAuditLog(
-                "UPDATE",
-                "Word",
-                word.getId(),
-                idUser,
-                username,
-                role,
-                "Update word with id " + word.getId() + " in word set with id " + word.getIdWordSet() + " with word " + word.getWord() + " and note " + word.getNote()
-            );
-            return ResponseEntity.ok(word);
         }
 
         Optional<WordSet> linkedWordSet = wordSetsService.findById(foundWord.get().getIdWordSet());
@@ -185,7 +169,49 @@ public class WordsController {
 
 
 
-    @Operation(summary = "Delete Word by its id")
+    @Operation(summary = "Update Word by its id (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Word not found",
+        content = @Content(mediaType = "application/json",
+        examples = @ExampleObject(
+            value = "{ \"message\": \"Word Set not found\", \"statusCode\": \"404\" }"
+        ))),
+        @ApiResponse(responseCode = "200", description = "Successfully updated",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = Word.class)
+        ))
+    })
+    @PatchMapping("/{id}")
+    public @ResponseBody ResponseEntity<?> updateWordByIdForAdmin(
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
+        @PathVariable Integer id,
+        @RequestBody UpdateDto updateDto
+    ) {
+        Optional<Word> foundWord = wordsService.findById(id);
+
+        if (foundWord.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Word not found", 404), HttpStatusCode.valueOf(404));
+        }
+
+        Word word = wordsService.updateWordById(id, updateDto).get();
+        // make audit log
+        auditLogsService.createAuditLog(
+            "UPDATE",
+            "Word",
+            word.getId(),
+            idUser,
+            username,
+            role,
+            "Update word with id " + word.getId() + " in word set with id " + word.getIdWordSet() + " with word " + word.getWord() + " and note " + word.getNote()
+        );
+        return ResponseEntity.ok(word);
+    }
+
+
+
+    @Operation(summary = "Delete your Word by its id")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Word not found",
         content = @Content(mediaType = "application/json",
@@ -203,7 +229,7 @@ public class WordsController {
                 value = "{ \"message\": \"Delete word successfully\", \"statusCode\": \"403\" }"
         ))),
     })
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/me/{id}")
     public @ResponseBody ResponseEntity<?> deleteById(
         @RequestAttribute Integer idUser,
         @RequestAttribute String username,
@@ -216,25 +242,52 @@ public class WordsController {
             return new ResponseEntity<Detail>(new Detail("Word not found", 404), HttpStatusCode.valueOf(404));
         }
 
-        if (role.equals("admin")) {
-            // make audit log
-            auditLogsService.createAuditLog(
-                "DELETE",
-                "Word",
-                foundWord.get().getId(),
-                idUser,
-                username,
-                role,
-                "Delete word with id " + foundWord.get().getId() + " in word set with id " + foundWord.get().getIdWordSet() + " with word " + foundWord.get().getWord() + " and note " + foundWord.get().getNote()
-            );
-            wordsService.deleteWordById(id);
-            wordSetsService.updateNoWordsById(foundWord.get().getIdWordSet(), false);
-            return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
-        }
-
         Optional<WordSet> linkedWordSet = wordSetsService.findById(foundWord.get().getIdWordSet());
         if (linkedWordSet.get().getIdUser() != idUser) {
             return new ResponseEntity<Detail>(new Detail("Delete other user's word is for Admin only", 403), HttpStatusCode.valueOf(403));
+        }
+
+        // make audit log
+        auditLogsService.createAuditLog(
+            "DELETE",
+            "Word",
+            foundWord.get().getId(),
+            idUser,
+            username,
+            role,
+            "Delete word with id " + foundWord.get().getId() + " in word set with id " + foundWord.get().getIdWordSet() + " with word " + foundWord.get().getWord() + " and note " + foundWord.get().getNote()
+        );
+        wordsService.deleteWordById(id);
+        wordSetsService.updateNoWordsById(foundWord.get().getIdWordSet(), false);
+        return new ResponseEntity<Detail>(new Detail("Delete word successfully", 200), HttpStatusCode.valueOf(200));
+    }
+
+
+
+    @Operation(summary = "Delete Word by its id (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Word not found",
+        content = @Content(mediaType = "application/json",
+        examples = @ExampleObject(
+            value = "{ \"message\": \"Word Set not found\", \"statusCode\": \"404\" }"
+        ))),
+        @ApiResponse(responseCode = "200", description = "Successfully deleted",
+            content = @Content(mediaType = "application/json",
+            examples = @ExampleObject(
+                value = "{ \"message\": \"Delete word successfully\", \"statusCode\": \"403\" }"
+        ))),
+    })
+    @DeleteMapping("/{id}")
+    public @ResponseBody ResponseEntity<?> deleteByIdForAdmin(
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
+        @PathVariable Integer id
+    ) {
+        Optional<Word> foundWord = wordsService.findById(id);
+
+        if (foundWord.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Word not found", 404), HttpStatusCode.valueOf(404));
         }
 
         // make audit log

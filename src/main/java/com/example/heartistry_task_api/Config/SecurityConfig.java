@@ -31,16 +31,25 @@ public class SecurityConfig {
                                 "/actuator/**")
                         .permitAll() // Allow necessary endpoints
                         .requestMatchers(
-                                "/wordsets/all",
-                                "/words/all",
-                                "/documents/all",
-                                "/audit-logs/all",
-                                "/wordsets/all/pagination",
-                                "/words/all/pagination",
-                                "/documents/all/pagination",
-                                "/audit-logs/all/pagination")
+                                "/wordsets/add",
+                                "/wordsets/me/pagination",
+                                "/wordsets/me/all",
+                                "/wordsets/me/*",
+                                "/wordsets",
+                                "/wordsets",
+                                "/wordsets",
+                                "",
+                                "",
+                                ""
+                        )
+                        .authenticated()
+                        .requestMatchers(
+                                "/wordsets/*",
+                                "",
+                                "",
+                                ""
+                        )
                         .hasAuthority("admin") // Allow specific endpoint with specific role
-                        .anyRequest().authenticated() // Secure other endpoints
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
