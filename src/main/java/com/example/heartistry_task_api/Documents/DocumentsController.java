@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.heartistry_task_api.AuditLogs.AuditLogsService;
 import com.example.heartistry_task_api.Documents.Dto.AddDto;
+import com.example.heartistry_task_api.Documents.Dto.AdminUpdateDto;
 import com.example.heartistry_task_api.Documents.Dto.UpdateDto;
 import com.example.heartistry_task_api.Responses.Detail;
 import com.example.heartistry_task_api.Responses.ObjectWithPagination;
@@ -180,7 +181,7 @@ public class DocumentsController {
         @RequestAttribute String username,
         @RequestAttribute String role,
         @PathVariable Integer id,
-        @RequestBody UpdateDto updateDto
+        @RequestBody AdminUpdateDto adminUpdateDto
     ) {
         Optional<Document> foundDocument = documentsService.findById(id);
 
@@ -188,7 +189,7 @@ public class DocumentsController {
             return new ResponseEntity<Detail>(new Detail("Document not found", 404), HttpStatusCode.valueOf(404));
         }
 
-        Document document = documentsService.updateById(id, updateDto).get();
+        Document document = documentsService.updateByIdForAdmin(id, adminUpdateDto).get();
         // make audit log
         auditLogsService.createAuditLog(
             "UPDATE",

@@ -18,6 +18,7 @@ import com.example.heartistry_task_api.Responses.ObjectWithPagination;
 import com.example.heartistry_task_api.WordSets.WordSet;
 import com.example.heartistry_task_api.WordSets.WordSetsService;
 import com.example.heartistry_task_api.Words.Dto.AddDto;
+import com.example.heartistry_task_api.Words.Dto.AdminUpdateDto;
 import com.example.heartistry_task_api.Words.Dto.UpdateDto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -187,7 +188,7 @@ public class WordsController {
         @RequestAttribute String username,
         @RequestAttribute String role,
         @PathVariable Integer id,
-        @RequestBody UpdateDto updateDto
+        @RequestBody AdminUpdateDto adminUpdateDto
     ) {
         Optional<Word> foundWord = wordsService.findById(id);
 
@@ -195,7 +196,7 @@ public class WordsController {
             return new ResponseEntity<Detail>(new Detail("Word not found", 404), HttpStatusCode.valueOf(404));
         }
 
-        Word word = wordsService.updateWordById(id, updateDto).get();
+        Word word = wordsService.updateWordByIdForAdmin(id, adminUpdateDto).get();
         // make audit log
         auditLogsService.createAuditLog(
             "UPDATE",

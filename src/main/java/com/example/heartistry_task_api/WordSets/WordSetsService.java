@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.heartistry_task_api.WordSets.Dto.AdminUpdateDto;
 import com.example.heartistry_task_api.WordSets.Dto.UpdateDto;
 
 @Service
@@ -43,6 +44,14 @@ public class WordSetsService {
     public Optional<WordSet> updateById(Integer id, UpdateDto updateDto) {
         return wordSetsRepository.findById(id).map(target -> {
             target.setTopic(updateDto.getTopic());
+            return target;
+        });
+    }
+
+    @Transactional
+    public Optional<WordSet> updateByIdForAdmin(Integer id, AdminUpdateDto adminUpdateDto) {
+        return wordSetsRepository.findById(id).map(target -> {
+            target.setIsRecommended(adminUpdateDto.getIsRecommended());
             return target;
         });
     }
