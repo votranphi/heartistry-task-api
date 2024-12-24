@@ -35,21 +35,37 @@ public class SecurityConfig {
                                 "/wordsets/me/pagination",
                                 "/wordsets/me/all",
                                 "/wordsets/me/*",
+                                "/wordsets/recommended/pagination",
+                                "/wordsets/me/count",
                                 "/wordsets",
-                                "/wordsets",
-                                "/wordsets",
-                                "",
-                                "",
-                                ""
+                                "/words/add",
+                                "/words/*/pagination",
+                                "/words/*/all",
+                                "/words/me/*",
+                                "/words/me/count",
+                                "documents/add",
+                                "documents/me/pagination",
+                                "documents/me/all",
+                                "documents/me/*",
+                                "audit-logs/add",
+                                "audit-logs/me/statistics"
                         )
-                        .authenticated()
+                        .hasAuthority("user")
                         .requestMatchers(
                                 "/wordsets/*",
-                                "",
-                                "",
-                                ""
+                                "/wordsets/all",
+                                "/wordsets/all/pagination",
+                                "/words/*",
+                                "/words/all",
+                                "/words/all/pagination",
+                                "documents/*",
+                                "documents/all",
+                                "documents/all/pagination",
+                                "audit-logs/all",
+                                "audit-logs/all/pagination"
                         )
                         .hasAuthority("admin") // Allow specific endpoint with specific role
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

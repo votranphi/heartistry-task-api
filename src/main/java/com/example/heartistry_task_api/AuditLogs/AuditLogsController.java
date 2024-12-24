@@ -108,7 +108,7 @@ public class AuditLogsController {
             array = @ArraySchema(schema = @Schema(implementation = Pair.class))
         ))
     })
-    @GetMapping("/statistics")
+    @GetMapping("/me/statistics")
     public @ResponseBody ResponseEntity<List<Pair>> getWordsLearningStatistics(@RequestAttribute Integer idUser) {
         List<AuditLog> auditLogs = auditLogsService.findByActionAndUserId("LEARN", idUser);
 
