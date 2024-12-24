@@ -50,7 +50,7 @@ public class SecurityConfig {
                                 "audit-logs/add",
                                 "audit-logs/me/statistics"
                         )
-                        .hasAuthority("user")
+                        .authenticated()
                         .requestMatchers(
                                 "/wordsets/*",
                                 "/wordsets/all",
