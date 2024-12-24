@@ -112,7 +112,7 @@ public class WordSetsController {
 
 
 
-    @Operation(summary = "Update Word Set info by its id")
+    @Operation(summary = "Update your Word Set info")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Word Set not found",
         content = @Content(mediaType = "application/json",
@@ -129,7 +129,7 @@ public class WordSetsController {
             schema = @Schema(implementation = WordSet.class)
         ))
     })
-    @PatchMapping("/{id}")
+    @PatchMapping("/me/{id}")
     public @ResponseBody ResponseEntity<?> updateById(
         @RequestAttribute Integer idUser,
         @RequestAttribute String username,
@@ -143,23 +143,50 @@ public class WordSetsController {
             return new ResponseEntity<Detail>(new Detail("Word Set not found", 404), HttpStatusCode.valueOf(404));
         }
 
-        if (role.equals("admin")) {
-            WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
-            // make audit log
-            auditLogsService.createAuditLog(
-                "UPDATE",
-                "WordSet",
-                wordSet.getId(),
-                idUser,
-                username,
-                role,
-                "Update WordSet with topic: " + wordSet.getTopic()
-            );
-            return ResponseEntity.ok(wordSet);
-        }
-
         if (foundWordSet.get().getIdUser() != idUser) {
             return new ResponseEntity<Detail>(new Detail("Update other user's wordset is for Admin only", 403), HttpStatusCode.valueOf(403));
+        }
+
+        WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
+        // make audit log
+        auditLogsService.createAuditLog(
+            "UPDATE",
+            "WordSet",
+            wordSet.getId(),
+            idUser,
+            username,
+            role,
+            "Update WordSet with topic: " + wordSet.getTopic()
+        );
+        return ResponseEntity.ok(wordSet);
+    }
+
+
+
+    @Operation(summary = "Update Word Set info by its id (Admin only)")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Word Set not found",
+        content = @Content(mediaType = "application/json",
+        examples = @ExampleObject(
+            value = "{ \"message\": \"Word Set not found\", \"statusCode\": \"404\" }"
+        ))),
+        @ApiResponse(responseCode = "200", description = "Successfully updated",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(implementation = WordSet.class)
+        ))
+    })
+    @PatchMapping("/{id}")
+    public @ResponseBody ResponseEntity<?> updateByIdForAdmin(
+        @RequestAttribute Integer idUser,
+        @RequestAttribute String username,
+        @RequestAttribute String role,
+        @PathVariable Integer id,
+        @RequestBody UpdateDto updateDto
+    ) {
+        Optional<WordSet> foundWordSet = wordSetsService.findById(id);
+
+        if (foundWordSet.isEmpty()) {
+            return new ResponseEntity<Detail>(new Detail("Word Set not found", 404), HttpStatusCode.valueOf(404));
         }
 
         WordSet wordSet = wordSetsService.updateById(id, updateDto).get();
