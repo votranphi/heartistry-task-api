@@ -23,15 +23,18 @@ public class Document {
     private String url;
     @Schema(description = "Is this document approved", example = "false")
     private Boolean isApproved;
+    @Schema(description = "Type of the document", example = "pdf")
+    private String type;
 
     public Document() {}
 
-    public Document(Integer idUser, String name, String description, String url) {
+    public Document(Integer idUser, String name, String description, String url, String type) {
         this.idUser = idUser;
         this.name = name;
         this.description = description;
         this.url = url;
         this.isApproved = false;
+        this.type = type;
     }
 
     public String getDescription() {
@@ -52,6 +55,9 @@ public class Document {
     public Boolean getIsApproved() {
         return isApproved;
     }
+    public String getType() {
+        return type;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -70,5 +76,8 @@ public class Document {
     }
     public void setIsApproved(Boolean isApproved) {
         this.isApproved = isApproved;
+    }
+    public void setType(String type) {
+        this.type = type;
     }
 }
