@@ -44,6 +44,7 @@ public class DocumentsService {
         return documentsRepository.findById(id).map(target -> {
             target.setName(adminUpdateDto.getName());
             target.setDescription(adminUpdateDto.getDescription());
+            target.setIsApproved(adminUpdateDto.getIsApproved());
             return target;
         });
     }
