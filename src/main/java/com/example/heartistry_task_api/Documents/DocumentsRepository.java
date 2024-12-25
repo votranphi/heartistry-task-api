@@ -11,8 +11,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DocumentsRepository extends JpaRepository<Document, Integer>  {
+    @Query("SELECT d FROM Document d WHERE d.idUser = :idUser AND d.isApproved = true")
     Page<Document> findByIdUser(@Param("idUser") Integer idUser, Pageable pageable);
 
+    @Query("SELECT d FROM Document d WHERE d.idUser = :idUser AND d.isApproved = true")
     List<Document> findByIdUser(@Param("idUser") Integer idUser);
 
     @Query("SELECT COUNT(d) FROM Document d WHERE d.idUser = :idUser")
