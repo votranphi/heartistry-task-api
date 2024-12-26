@@ -10,13 +10,16 @@ public class AddDto {
     private String description;
     @Schema(description = "Url of the Document", example = "https://res.cloudinary.com/diy6oyo6l/image/upload/v1733592844/image_hdhb1e.png")
     private String url;
+    @Schema(description = "Type of the document", example = "pdf")
+    private String type;
 
     public AddDto() {}
 
-    public AddDto(String name, String description, String url) {
+    public AddDto(String name, String description, String url, String type) {
         this.name = name;
         this.description = description;
         this.url = url;
+        this.type = type;
     }
 
     public String getDescription() {
@@ -28,6 +31,9 @@ public class AddDto {
     public String getUrl() {
         return url;
     }
+    public String getType() {
+        return type;
+    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -37,5 +43,8 @@ public class AddDto {
     }
     public void setUrl(String url) {
         this.url = url;
+    }
+    public void setType(String type) {
+        this.type = type;
     }
 }

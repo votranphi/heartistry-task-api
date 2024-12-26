@@ -59,7 +59,7 @@ public class DocumentsController {
         @RequestAttribute String role,
         @RequestBody AddDto addDto
     ) {
-        Document newDocument = new Document(idUser, addDto.getName(), addDto.getDescription(), addDto.getUrl());
+        Document newDocument = new Document(idUser, addDto.getName(), addDto.getDescription(), addDto.getUrl(), addDto.getType());
 
         Document savedDocument = documentsService.save(newDocument);
 
