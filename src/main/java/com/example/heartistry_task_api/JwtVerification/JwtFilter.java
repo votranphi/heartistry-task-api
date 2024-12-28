@@ -64,7 +64,12 @@ public class JwtFilter implements Filter {
                 return;
             }
         } else {
-            if (!httpServletRequest.getServletPath().startsWith("/swagger-ui") && !httpServletRequest.getServletPath().startsWith("/v3/api-docs")) {
+            if
+            (
+                !httpServletRequest.getServletPath().startsWith("/swagger-ui") &&
+                !httpServletRequest.getServletPath().startsWith("/v3/api-docs") &&
+                !httpServletRequest.getServletPath().startsWith("/actuator")
+            ) {
                 httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }

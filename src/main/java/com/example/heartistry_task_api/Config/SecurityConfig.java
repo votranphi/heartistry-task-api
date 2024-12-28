@@ -43,12 +43,12 @@ public class SecurityConfig {
                                 "/words/*/all",
                                 "/words/me/*",
                                 "/words/me/count",
-                                "documents/add",
-                                "documents/me/pagination",
-                                "documents/me/all",
-                                "documents/me/*",
-                                "audit-logs/add",
-                                "audit-logs/me/statistics"
+                                "/documents/add",
+                                "/documents/me/pagination",
+                                "/documents/me/all",
+                                "/documents/me/*",
+                                "/audit-logs/add",
+                                "/audit-logs/me/statistics"
                         )
                         .authenticated()
                         .requestMatchers(
@@ -58,11 +58,11 @@ public class SecurityConfig {
                                 "/words/*",
                                 "/words/all",
                                 "/words/all/pagination",
-                                "documents/*",
-                                "documents/all",
-                                "documents/all/pagination",
-                                "audit-logs/all",
-                                "audit-logs/all/pagination"
+                                "/documents/*",
+                                "/documents/all",
+                                "/documents/all/pagination",
+                                "/audit-logs/all",
+                                "/audit-logs/all/pagination"
                         )
                         .hasAuthority("admin") // Allow specific endpoint with specific role
                         .anyRequest().authenticated()
